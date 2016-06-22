@@ -2,8 +2,6 @@
     Selects all existing couples records.
 */
 
--- SELECT * FROM ${schema~}.Couples
-
 SELECT * FROM ${schema~}.Couples as Couples
 INNER JOIN ${schema~}.couples_users as couples_users
 ON Couples.couple_id = couples_users.couple_id

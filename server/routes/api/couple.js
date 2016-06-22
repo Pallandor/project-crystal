@@ -24,7 +24,6 @@ router.get('/couples', (req, res, next) => {
     });
 });
 
-// RF: Inner join, return couple + user infos
 // get single couple
 router.get('/couples/:id', (req, res, next) => {
   const couple_id = parseInt(req.params.id);
@@ -33,7 +32,7 @@ router.get('/couples/:id', (req, res, next) => {
       return res.status(200)
         .json({
           success: true,
-          data
+          data: helpers.desensitize(data)
         });
     })
     .catch(err => {

@@ -9,11 +9,6 @@ AND Couples.couple_id = $1
 INNER JOIN ${schema~}.Users as Users
 ON Users.user_id = couples_users.user_id;
 
--- SELF-NOTES: 
--- WHERE ${schema~}.Couples.couple_id = $1
--- INNER JOIN ${schema~}.Users
--- ON ${schema~}.couples_users.user_id = ${schema~}.Users.user_id
-
 -- // Optimisation which may obscure failed UNIQUE constraints: 
 -- LIMIT 1
 -- WHERE (condition)

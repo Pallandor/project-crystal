@@ -32,7 +32,7 @@ const config = {
     host: 'localhost',
     port: 5432,
     database: 'blossomly',                       
-    user: 'MikeCruz'
+    user: 'Roger'
 };
 
 // Load and initialize pg-promise:

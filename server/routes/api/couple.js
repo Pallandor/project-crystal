@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const db = require(__dirname + '/../../db/index').db;
-const Couples = db.couples,
-  CouplesUsers = db.couples_users;
+const Couples = db.couples;
+const CouplesUsers = db.couples_users;
 const pgp = require(__dirname + '/../../db/index').pgp;
+const helpers = require (__dirname + '/../../helpers');
 
-// RF: inner join, return couple + user info
 // get all couples
 router.get('/couples', (req, res, next) => {
   Couples.all()
@@ -13,7 +13,7 @@ router.get('/couples', (req, res, next) => {
       return res.status(200)
         .json({
           success: true,
-          data
+          data: helpers.desensitize(data)
         });
     })
     .catch(err => {

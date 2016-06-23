@@ -49,7 +49,7 @@ class Quiz extends Component {
     // }
 
     result = {
-      user_id: 9, // We will access this from redux store and redux store will save this after signin/signup
+      user_id: 8, // We will access this from redux store and redux store will save this after signin/signup
       Respect: 69,
       Spontaneity: 58,
       Intimacy: 50,

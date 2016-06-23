@@ -36,9 +36,20 @@ module.exports = rep => {
     findById: id =>
       rep.oneOrNone(sql.findById, id, user =>
         user),
+
     findByEmail: email =>
       rep.oneOrNone(sql.findByEmail, email, user =>
         user),
+
+    checkIfExists: email => 
+      rep.oneOrNone(sql.findByEmail, email, user =>{
+        // const helpers = require(__dirname + '/../../helpers/helpers');
+        // helpers.customLog(user);
+        if (user !== null){
+          return true;
+        }
+        return false;
+      }),
 
     // RF: 
     // update: (user_id, objWithUpdates, pgp) => {

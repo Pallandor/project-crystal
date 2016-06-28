@@ -24,8 +24,7 @@ module.exports = rep => {
 
     // Adds a new question, and returns the new question;
     add: newQuestionObj =>
-      rep.one(sql.add, newQuestionObj, question =>
-        question),
+      rep.one(sql.add, newQuestionObj),
 
     // Return all questions, with qualifiers in an options object
     // defined on the API route

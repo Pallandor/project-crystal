@@ -1,8 +1,7 @@
 /*
-    Inserts a new question record.
-    Expects (question: str of question text, frequency: str of which set the question belongs to(initial, daily, ...), answers: '{ answers: [ "choiceFoo", "choiceBar", ... ]}')
+    Insert a new question record
+    Returns the inserted question. 
 */
-INSERT INTO ${schema~}.Question(question, frequency, answers)
-VALUES(${question}, ${frequency}, ${answers})
--- RETURNING id   // CHANGED
+INSERT INTO Questions(category, question_text)
+VALUES(${category}, ${question_text})
 RETURNING *

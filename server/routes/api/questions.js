@@ -28,33 +28,17 @@ router.get('/questions/:frequency', (req, res, next) => {
     })
 });
 
-// add new question and return newly added question
+// add a new question and return the added question
 router.post('/questions/add', (req, res, next) => {
   const newQuestion = req.body;
-  /* format: 
-  {
-    question: str of question text, 
-    frequency: str of which set the question belongs to(initial, daily, quiz, ...), 
-    '{ answers: [ "choiceFoo", "choiceBar", ... ]}'
-  }
-  */
-
   Questions.add(newQuestion)
-    .then(data => {
-      return res.status(200)
-        .json({
-          success: true,
-          data
-        });
-    })
-    .catch(err => {
-      res.json({
-        success: false,
-        error: err.message || err
-      });
-    });
-
-
+    .then(data =>
+      res.status(200)
+      .json({
+        success: true,
+        data,
+      }))
+    .catch(err => next(err));
 });
 
 // delete single question

@@ -7,11 +7,11 @@ module.exports = rep => {
   return {
 
     // Creates the table;
-    create: () => 
+    create: () =>
       rep.none(sql.create),
 
     // Initializes the table with some question records.
-    init: () => 
+    init: () =>
       rep.none(sql.init),
 
     // Drops the table;
@@ -29,7 +29,7 @@ module.exports = rep => {
     // Return all questions, with qualifiers in an options object
     // defined on the API route
     all: (options) => {
-      return ('nothing here yet!'); 
+      return ('nothing here yet!');
     },
 
     // Tries to delete a question by id, and returns the number of records deleted;
@@ -40,5 +40,8 @@ module.exports = rep => {
     findByFrequency: frequency =>
       rep.any(sql.findByFrequency, frequency, questions =>
         questions),
+
+    findById: questionId =>
+      rep.oneOrNone(sql.findById, questionId),
   };
 };

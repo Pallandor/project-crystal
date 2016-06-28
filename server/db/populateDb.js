@@ -7,7 +7,7 @@ const populateDb = () => {
     // .then(db.categories.create)   // new
     // .then(db.categories.init)   // new
     .then(db.questions.create)
-    .then(db.questions.init)
+    // .then(db.questions.init)
     // .then(db.questions_categories.create)  // new
     // .then(db.questions_categories.init)   // new
     .then(result => console.log('Db successfully restarted!'))

@@ -57,6 +57,7 @@ module.exports = {
         add: sql('questions/add.sql'),
         all: sql('questions/all.sql'),
         findByFrequency: sql('questions/findByFrequency.sql'),
+        findById: sql('questions/findById.sql'),
         remove: sql('questions/remove.sql'),
     }
 };

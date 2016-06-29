@@ -57,7 +57,8 @@ describe('## Answers APIs', function() {
             if (err) done(err);
             expect(res.body.success).to.equal(true);
             expect(res.body.data).to.be.instanceOf(Array);
-            // expect(res.body.data[0]).to.equal('i love the other personn sooo much!!!'); 
+            // only testing sample for expected keys
+            expect(res.body.data[0]).to.have.all.keys(['answer_id', 'user_id', 'couple_id', 'question_id', 'answer_text', 'created_at', 'updated_at', 'question_text', 'category']);
             done();
           });
       });
@@ -77,13 +78,13 @@ describe('## Answers APIs', function() {
             expect(res.body.success).to.equal(true);
             expect(res.body.data).to.be.instanceOf(Array);
             expect(res.body.data).to.have.a.lengthOf(1);
-            expect(res.body.data[0]).to.have.all.keys(['answer_id', 'user_id', 'couple_id', 'question_id', 'answer_text', 'created_at', 'updated_at']);
+            expect(res.body.data[0]).to.have.all.keys(['answer_id', 'user_id', 'couple_id', 'question_id', 'answer_text', 'created_at', 'updated_at', 'category', 'question_text']);
             done();
           });
       });
     });
 
-     describe('# DELETE /api/v1/answers/:answerId', function() {
+    describe('# DELETE /api/v1/answers/:answerId', function() {
       it('It should delete an answer', function(done) {
         request
           .delete('/api/v1/answers/' + 1)
@@ -93,12 +94,12 @@ describe('## Answers APIs', function() {
             expect(res.body.data).to.be.an('object');
             expect(res.body.data.answer_id).to.equal(1);
             Answers.findById(1)
-              .then(function(foundAnswer){
-                expect(foundAnswer).to.not.exist; 
-                done(); 
+              .then(function(foundAnswer) {
+                expect(foundAnswer).to.not.exist;
+                done();
               })
-              .catch(function(err){
-                done(err); 
+              .catch(function(err) {
+                done(err);
               });
 
           });

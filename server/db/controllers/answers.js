@@ -4,17 +4,6 @@ var sql = require('../sql').answers;
 
 module.exports = rep => {
 
-  //   answers : {
-  //     create: sql('answers/create.sql'),
-  //     init: sql('answers/init.sql'),
-  //     add: sql('answers/init.sql'),
-  //     update: sql('answers/update.sql'),
-  //     findById: sql('answers/findById.sql'),
-  //     findByUserId: sql('answers/findByUserId.sql'),
-  //     findByCoupleId: sql('answers/findByCoupleId'),
-  //     remove: sql('answers/remove.sql'),
-  // },
-
   return {
 
     // Creates the table;

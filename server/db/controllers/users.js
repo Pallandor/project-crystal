@@ -20,14 +20,6 @@ module.exports = rep => {
         t.map(sql.init, null, row =>
           row)),
 
-    // Drops the table;
-    drop: () =>
-      rep.none(sql.drop),
-
-    // Removes all records from the table;
-    empty: () =>
-      rep.none(sql.empty),
-
     // Adds a new User using passed in data from newUser object
     addFirstUser: newUser =>
       rep.one(sql.addFirstUser, newUser),

@@ -30,9 +30,7 @@ const sql = (file) => {
 module.exports = {
     users: {
         create: sql('users/create.sql'),
-        empty: sql('users/empty.sql'),
         init: sql('users/init.sql'),
-        drop: sql('users/drop.sql'),
         all: sql('users/all.sql'),
         findById: sql('users/findById.sql'),
         findByEmail: sql('users/findByEmail.sql'),

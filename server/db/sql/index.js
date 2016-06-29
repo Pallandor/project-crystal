@@ -59,5 +59,15 @@ module.exports = {
         findByFrequency: sql('questions/findByFrequency.sql'),
         findById: sql('questions/findById.sql'),
         remove: sql('questions/remove.sql'),
-    }
+    },
+    answers : {
+        create: sql('answers/create.sql'),
+        init: sql('answers/init.sql'),
+        add: sql('answers/add.sql'),
+        update: sql('answers/update.sql'),
+        findById: sql('answers/findById.sql'),
+        findByUserId: sql('answers/findByUserId.sql'),
+        findByCoupleId: sql('answers/findByCoupleId.sql'),
+        remove: sql('answers/remove.sql'),
+    },
 };

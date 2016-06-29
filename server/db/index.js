@@ -8,6 +8,7 @@ const controllers = {
     users: require('./controllers/users'),
     questions: require('./controllers/questions'),
     couples: require('./controllers/couples'),
+    answers: require('./controllers/answers'), 
 };
 
 // pg-promise initialization options:
@@ -21,6 +22,7 @@ const options = {
         obj.users = controllers.users(obj);
         obj.questions = controllers.questions(obj);
         obj.couples = controllers.couples(obj); 
+        obj.answers = controllers.answers(obj); 
     }
 
 };

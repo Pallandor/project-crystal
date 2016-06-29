@@ -1,5 +1,5 @@
 /*
-    Remove couples record from Questions.
+    Remove a question.
 */
 
 DELETE from ${schema~}.Questions

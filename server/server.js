@@ -24,6 +24,7 @@ require('./db/populateDb')();
 const userAPIroutes = require('./routes/api/user');
 const coupleAPIroutes = require('./routes/api/couple');
 const questionAPIroutes = require('./routes/api/questions');
+const answerAPIroutes = require('./routes/api/answers'); 
 
 // const CouplesUser = require('./db/repos/couples_users');
 
@@ -31,6 +32,7 @@ const questionAPIroutes = require('./routes/api/questions');
 app.use('/api/v1', userAPIroutes);
 app.use('/api/v1', coupleAPIroutes);
 app.use('/api/v1', questionAPIroutes);
+app.use('/api/v1', answerAPIroutes); 
 
 router(app);
 

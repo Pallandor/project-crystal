@@ -44,29 +44,21 @@ router.post('/couples/answers', (req, res, next) => {
 
 // update couple relationship score and return couple
 router.put('/couples/:coupleId/:newScore', (req, res, next) => {
-  Couples.updateScore(couple_id, score)
-    .then(data => {
-      return res.status(200)
-        .json({
-          success: true,
-          data,
-        });
-    })
-    .catch(err => next(err));
+  res.send('Couple update score logic needs to be refactored, please see Couples API Routes and correct this!'); 
+  // Couples.updateScore(req.params.coupleId, req.params.newScore)
+  //   .then(data => {
+  //     return res.status(200)
+  //       .json({
+  //         success: true,
+  //         data,
+  //       });
+  //   })
+  //   .catch(err => next(err));
 });
 
 // delete a couple and return the deleted couple
 router.delete('/couples/:id', (req, res, next) => {
-  const couple_id = parseInt(req.params.id);
-  Couples.remove(couple_id)
-    .then(data => {
-      return res.status(200)
-        .json({
-          success: true,
-          data,
-        });
-    })
-    .catch(err => next(err));
+  res.send('The DELETE couples route has been deprecated. Deletion should be on a user by user basis, couple deletion is handled implicitly and automatically following user deletions'); 
 });
 
 module.exports = router;

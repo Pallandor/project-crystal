@@ -3,22 +3,28 @@ const router = express.Router();
 const Questions = require(__dirname + '/../../db/index').db.questions;
 const pgp = require(__dirname + '/../../db/index').pgp;
 
-/** Get all existing questions. 
-May pass options on req.body to specify additional search criteria  */
+
+router.put('/questions/:id', (req,res,next) => {
+  res.send('Nothing yet on the questions update route, stay tuned folks! :)'); 
+});
+
+// get all existing questions
+// RF: Allow a qualifier object to be passed in for category-limiting
 router.get('/questions', (req, res, next) => {
   Questions.all()
     .then(data => {
       return res.status(200)
         .json({
           success: true,
-          data
+          data, 
         });
     })
+    .catch(err=>done(err)); 
 });
 
-// get group of questions
-router.get('/questions/:frequency', (req, res, next) => {
-  Questions.findByFrequency(req.params.frequency)
+// get a question by question id
+router.get('/questions/:id', (req, res, next) => {
+  Questions.findById(req.params.id)
     .then(data => {
       return res.status(200)
         .json({
@@ -26,6 +32,7 @@ router.get('/questions/:frequency', (req, res, next) => {
           data
         });
     })
+    .catch(err => next(err));
 });
 
 // add a new question and return the added question
@@ -41,22 +48,17 @@ router.post('/questions/add', (req, res, next) => {
     .catch(err => next(err));
 });
 
-// delete single question
+// delete a question and return the deleted question
 router.delete('/questions/:id', (req, res, next) => {
   Questions.remove(req.params.id)
     .then(data => {
       return res.status(200)
         .json({
           success: true,
-          data
-        })
+          data,
+        }); 
     })
-    .catch(err => {
-      res.json({
-        success: false,
-        error: err.message || err
-      });
-    });
+    .catch(err => next(err));
 });
 
 module.exports = router;

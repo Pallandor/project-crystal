@@ -26,15 +26,14 @@ module.exports = rep => {
     add: newQuestionObj =>
       rep.one(sql.add, newQuestionObj),
 
-    // Return all questions, with qualifiers in an options object
-    // defined on the API route
-    all: (options) => {
-      return ('nothing here yet!');
-    },
+    // Return all questions
+    // RF: Accept an options object to limit questions by categories desired etc.
+    all: () => 
+      rep.any(sql.findAll),
 
     // Tries to delete a question by id, and returns the number of records deleted;
-    remove: id =>
-      rep.result('DELETE FROM questions WHERE id = $1', id, r => r.rowCount),
+    remove: questionId =>
+      rep.oneOrNone(sql.remove, questionId),
 
     // Tries to find questions by frequency;
     findByFrequency: frequency =>
@@ -42,6 +41,6 @@ module.exports = rep => {
         questions),
 
     findById: questionId =>
-      rep.oneOrNone(sql.findById, questionId),
+      rep.oneOrNone(sql.findById, [questionId]),
   };
 };

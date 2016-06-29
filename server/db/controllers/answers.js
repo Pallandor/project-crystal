@@ -6,34 +6,23 @@ module.exports = rep => {
 
   return {
 
-    // Creates the table;
+    // Creates Answers table
     create: () =>
       rep.none(sql.create),
 
-    // Initializes the table with some question records.
+    // Initializes Answers Table with initial Answers
     init: () =>
       rep.none(sql.init),
 
-    // Drops the table;
-    drop: () =>
-      rep.none(sql.drop),
-
-    // Removes all records from the table;
-    empty: () =>
-      rep.none(sql.empty),
-
-    // Adds a new question, and returns the new question;
+    // Adds a new answer, and returns the added answer
     add: newAnswerObj =>
       rep.one(sql.add, newAnswerObj),
 
-    // Return all questions
-    // RF: Accept an options object to limit questions by categories desired etc.
-    all: () =>
-      rep.any(sql.findAll),
-
+    // Find all answers related to a couple
     findByCoupleId: coupleId =>
       rep.any(sql.findByCoupleId, coupleId),
 
+    // find all answers related to a user
     findByUserId: userId =>
       rep.any(sql.findByUserId, userId),
 
@@ -41,11 +30,7 @@ module.exports = rep => {
     remove: answerId => 
      rep.oneOrNone(sql.remove, answerId),
 
-    // Tries to find questions by frequency;
-    findByFrequency: frequency =>
-      rep.any(sql.findByFrequency, frequency, questions =>
-        questions),
-
+    // Find an answer by answer ID
     findById: answerId =>
       rep.oneOrNone(sql.findById, answerId),
   };

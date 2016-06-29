@@ -46,6 +46,7 @@ describe('## Question APIs', function() {
     describe('# GET /api/v1/questions/:id', function() {
 
       it('It should get all existing questions', function(done) {
+        console.log('inside get all existing questions test...');
         const firstQuestion = merge({}, mockQuestions[0]);
         request
           .get('/api/v1/questions')

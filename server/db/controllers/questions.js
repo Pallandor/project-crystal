@@ -6,21 +6,13 @@ module.exports = rep => {
 
   return {
 
-    // Creates the table;
+    // Creates Questions table;
     create: () =>
       rep.none(sql.create),
 
-    // Initializes the table with some question records.
+    // Initializes the table with some questions.
     init: () =>
       rep.none(sql.init),
-
-    // Drops the table;
-    drop: () =>
-      rep.none(sql.drop),
-
-    // Removes all records from the table;
-    empty: () =>
-      rep.none(sql.empty),
 
     // Adds a new question, and returns the new question;
     add: newQuestionObj =>
@@ -31,16 +23,12 @@ module.exports = rep => {
     all: () => 
       rep.any(sql.findAll),
 
-    // Tries to delete a question by id, and returns the number of records deleted;
+    // Delete a question and return deleted question
     remove: questionId =>
       rep.oneOrNone(sql.remove, questionId),
 
-    // Tries to find questions by frequency;
-    findByFrequency: frequency =>
-      rep.any(sql.findByFrequency, frequency, questions =>
-        questions),
-
+    // Find question by question ID
     findById: questionId =>
-      rep.oneOrNone(sql.findById, [questionId]),
+      rep.oneOrNone(sql.findById, questionId),
   };
 };

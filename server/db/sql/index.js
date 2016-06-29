@@ -24,7 +24,9 @@ const sql = (file) => {
 
     return new QueryFile(path, options);
 }
-
+// NOTE IMPORTANT: These generate the sql.method.. files referenced in the relevant DB Controllers.
+// These do NOT match to the db controller method itself. sql.someMethod is only available because
+// here it is defined as someMethod: sql('....'); 
 module.exports = {
     users: {
         create: sql('users/create.sql'),
@@ -51,12 +53,14 @@ module.exports = {
         updateScore: sql('couples/updateScore.sql'),
         removeByUserId: sql('couples/removeByUserId.sql'), 
     },  
+// NOTE IMPORTANT: These generate the sql.method.. files referenced in the relevant DB Controllers.
+// These do NOT match to the db controller method itself. sql.someMethod is only available because
+// here it is defined as someMethod: sql('....'); 
     questions: {
         create: sql('questions/create.sql'),
         init: sql('questions/init.sql'),
         add: sql('questions/add.sql'),
         findAll: sql('questions/findAll.sql'),
-        findByFrequency: sql('questions/findByFrequency.sql'),
         findById: sql('questions/findById.sql'),
         remove: sql('questions/remove.sql'),
     },
@@ -64,7 +68,6 @@ module.exports = {
         create: sql('answers/create.sql'),
         init: sql('answers/init.sql'),
         add: sql('answers/add.sql'),
-        update: sql('answers/update.sql'),
         findById: sql('answers/findById.sql'),
         findByUserId: sql('answers/findByUserId.sql'),
         findByCoupleId: sql('answers/findByCoupleId.sql'),

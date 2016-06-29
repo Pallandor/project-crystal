@@ -1,8 +1,8 @@
 'use strict';
 const helpers = require(__dirname + '/../../helpers/helpers');
 const sql = require('../sql').users;
-// namespaced below differently because currently only importing module for removeById operation.
-// if additional operations begin to use module, standarize namespacing convention for sql files. 
+
+// grabs removeByUserId.sql file from the Couples SQL Folder. Need to migrate this to Users SQL Folder for clarity. 
 const sqlCouples = require('../sql').couples;
 const merge = require('lodash/merge');
 

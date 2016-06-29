@@ -5,31 +5,12 @@ const Couples = db.couples;
 const CouplesUsers = db.couples_users;
 const pgp = require(__dirname + '/../../db/index').pgp;
 
-// RF: inner join, return couple + user info
-// get all couples
+// RF: Standarize post-catch error handling procedure i.e. in some routes
+// you appear to translate to res.json response, in others you pass on to final route/error handler using next. 
+
+// get all couples with their associated users
 router.get('/couples', (req, res, next) => {
   Couples.all()
-    .then(data => {
-      return res.status(200)
-        .json({
-          success: true,
-          data
-        });
-    })
-    .catch(err => {
-      res.json({
-        success: false,
-        error: err.message || err
-      });
-    });
-});
-
-// RF: Inner join, return couple + user infos
-// get single couple
-router.get('/couples/:id', (req, res, next) => {
-  console.log('OMG ROGER IS AWESOME!!!!');
-  const couple_id = parseInt(req.params.id);
-  Couples.findById(couple_id)
     .then(data => {
       return res.status(200)
         .json({
@@ -37,78 +18,41 @@ router.get('/couples/:id', (req, res, next) => {
           data,
         });
     })
-    .catch(err => {
-      res.json({
-        success: false,
-        error: err.message || err
-      });
-    });
+    .catch(err => next(err));
 });
 
-// RF: inner join, returng couple + user info
-// add new couple and return newly added couple information
-// expecting /couples/add?user1_id=314&user2_id=912
-router.post('/couples/add', (req, res, next) => {
-  const user1_id = parseInt(req.query.user1_id);
-  const user2_id = parseInt(req.query.user2_id);
-  const initialScore = 0;
-
-  Couples.add(initialScore)
+// get a single couple and associated user information by couple ID
+router.get('/couples/:coupleId', (req, res, next) => {
+  Couples.findById(parseInt(req.params.coupleId))
     .then(data => {
-      CouplesUsers.add(data.couple_id, user1_id)
-        .then(CouplesUsers.add(data.couple_id, user2_id))
-        .then(data => {
-          res.status(200)
-            .json({
-              success: true,
-              data
-            });
-        })
-        .catch(err => {
-          res.json({
-            success: false,
-            error: err.message || err
-          });
+      return res.status(200)
+        .json({
+          success: true,
+          data,
         });
     })
+    .catch(err => next(err));
+});
+
+router.post('/couples/add', (req, res, next) => {
+  res.send('The Couples/Add route has been deprecated. Couple creation is handled implicitly by user creation and passing correct user creation flags e.g. is_first_of_couple.');
 });
 
 router.post('/couples/answers', (req, res, next) => {
-  const result = req.body;
-  console.log('lach kdjaskdjksjdkasjdkasjdkjaskdjaskdjaskdja')
-  console.log(result);
-  // Use userId to get coupleID
-  CouplesUsers.findByUserId(req.body.user_id)
-  // update couple score using coupleID
-  .then(coupleUser => {
-    console.log('If this works then issue is NOT findByUserId');
-    console.log(coupleUser);
-    Couples.updateScore(result, coupleUser.couple_id)
-    .then(data => {
-      console.log('ROuter COUPLE JS THEN STMT')
-      console.log(data)
-    })
-  });
+  res.send('The couples/answers route has been deprecated. See the Answers API for an alternative to obtain all answers related to a particular Couple');
 });
 
 // update couple relationship score and return couple
-router.put('/couples/:id/:score', (req, res, next) => {
-  const couple_id = parseInt(req.params.id),
-    score = parseInt(req.params.score);
+router.put('/couples/:coupleId/:newScore', (req, res, next) => {
   Couples.updateScore(couple_id, score)
     .then(data => {
       return res.status(200)
         .json({
           success: true,
-          data
+          data,
         });
     })
-    .catch(err => {
-      res.json({
-        success: false,
-        error: err.message || err
-      });
-    });
+    .catch(err => next(err));
 });
 
 // delete a couple and return the deleted couple
@@ -119,15 +63,10 @@ router.delete('/couples/:id', (req, res, next) => {
       return res.status(200)
         .json({
           success: true,
-          data
+          data,
         });
     })
-    .catch(err => {
-      res.json({
-        success: false,
-        error: err.message || err
-      });
-    });
+    .catch(err => next(err));
 });
 
 module.exports = router;

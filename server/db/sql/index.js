@@ -44,10 +44,8 @@ module.exports = {
     couples: {
         create: sql('couples/create.sql'),
         init: sql('couples/init.sql'),
-        add: sql('couples/add.sql'),
         all: sql('couples/all.sql'),
         findById: sql('couples/findById.sql'),
-        removeById: sql('couples/removeById.sql'),
         updateScore: sql('couples/updateScore.sql'),
         removeByUserId: sql('couples/removeByUserId.sql'), 
     },  

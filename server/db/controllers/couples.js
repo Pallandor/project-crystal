@@ -7,18 +7,8 @@ module.exports = rep => {
   return {
 
     // Creates the table;
-    create: () => {
-      console.log('inside couples creation...');
-      return rep.none(sql.create)
-        .then(result => {
-          console.log('couples creation, successfull.. ');
-          return result;
-        })
-        .catch(but => {
-          console.log('couples creation, err but..');
-          return but; 
-        });
-    },
+    create: () =>
+      rep.none(sql.create),
 
     // Initializes the table with some couple records, and returns each couple
     init: () =>
@@ -26,62 +16,21 @@ module.exports = rep => {
         t.map(sql.init, null, couple =>
           couple)),
 
-    // Adds new couple with initial score, and returns the whole new couple
-    add: () => {
-      return rep.one(sql.add);
-      // return rep.task(t => {
-      //     return t.one(sql.add)
-      //     .then(couple => {
-      //       console.log('couple.js in the repos....');
-      //       console.log(couple);
-      //       return t.any(sql.findById, couple.couple_id)
-      //         .then(couples => {
-      //           console.log('we are in repor/couple last then stmt');
-      //           console.log(couples);
-      //           return couples;
-      //         });
-      //     });
-      //   });
-        // .then()...
-    },
+    // Find a couple by couple ID, return existing couple record.
+    findById: couple_id =>
+      rep.oneOrNone(sql.findById, couple_id),
 
-    // Tries to delete a couple by id, and returns the deleted couple;
-    removeById: couple_id =>
-      rep.oneOrNone(sql.removeById, couple_id, couple => couple),
-
-    // Finds a couple by id, returns array of users related to that couple
-    findById: couple_id => {
-      // console.log("YAY IM IN FINDBYID COUPLES");
-      // console.log(couple_id);
-      // change from rep.any to rep.oneOrNone to ensure only single value expected to return!!! instead single value in array
-      return rep.oneOrNone(sql.findById, couple_id, couples => {
-        // console.log('COUPLE JS IN THE REPOS');
-        // console.log(couples);
-        return couples;
-      });
-    },
-
-    // Updates couple's health score
-    // updateScore: (couple_id, score) =>
-    //   rep.oneOrNone(sql.updateScore, [couple_id, score], couple =>
-    //     couple),
+    // Updates couple's scores
+    // RF: Should expect and receive in the same format as on database (respect_score etc)! 
+    // RF: Average operations should be extracted from hardcoded SQL file. e.g. sql.getCurrentScores
+    // then a helper function to perform averaging calculations and then SQL update operation on single, calculated values. 
     updateScore: (scoreObj, coupleId) => {
-      // rep.oneOrNone(sql.updateScore, [coupleId, scoreObj], couple =>
-      //   couple),
-      console.log('couple.js in the repo ==========');
-      console.log(coupleId);
-      console.log('couple.js in the repo---fsdfsdfsdfd');
-      console.log(scoreObj);
-
-      // Grab current scores (can we use sql query to insert something and it will
       return rep.one(sql.updateScore, [
         coupleId, scoreObj.Total, scoreObj.Respect, scoreObj.Communication,
         scoreObj.Intimacy, scoreObj.Generosity, scoreObj.Spontaneity,
       ]);
-      // existing value of the row -- as part of the writing operation)
-      // Average them with new scores
-      // Then, insert average into the table
     },
+
     // Returns all couple records;
     all: () =>
       rep.any(sql.all),

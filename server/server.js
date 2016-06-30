@@ -26,6 +26,9 @@ const coupleAPIroutes = require('./routes/api/couple');
 const questionAPIroutes = require('./routes/api/questions');
 const answerAPIroutes = require('./routes/api/answers'); 
 
+// Cors is a middleware that will handle CORS in the browser. Must sit before routes/static serves. 
+app.use(cors());
+
 // const CouplesUser = require('./db/repos/couples_users');
 
 // // *** API routes *** //
@@ -78,8 +81,7 @@ if (app.get('env') === 'development') {
 }
 app.use('/', express.static(path.resolve(__dirname, '../client/build')));
 
-// Cors is a middleware that will handle CORS in the browser
-app.use(cors());
+
 // Middleware that parses incoming requests into JSON no matter the type of request
 app.use(bodyParser.json({ type: '*/*' }));
 router(app);

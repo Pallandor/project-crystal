@@ -52,8 +52,8 @@ ON Couples.couple_id = partial_user_info.couple_id
 other_user_email
 */
 WITH new_user AS (
-  INSERT INTO Users (first_name, last_name, email, password, couple_id) 
-  VALUES (LOWER(${first_name}), LOWER(${last_name}), LOWER(${email}), ${password}, ${couple_id})
+  INSERT INTO Users (first_name, last_name, email, password, couple_id, facebook_id) 
+  VALUES (LOWER(${first_name}), LOWER(${last_name}), LOWER(${email}), ${password}, ${couple_id}, ${facebook_id})
   RETURNING user_id, first_name, last_name, email, password, couple_id 
 )
 SELECT * from new_user

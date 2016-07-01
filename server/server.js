@@ -14,61 +14,61 @@ const webpack = require('webpack');
 const config = require('../webpack.config');
 const compiler = webpack(config);
 const router = require('./router');
-const cors = require('cors');
+const dotenv = require('dotenv');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 
 // populate postgresql db
 require('./db/populateDb')();
 
+// Cors is a middleware that will handle CORS in the browser. Must sit before routes/static serves. 
+const cors = require('cors');
+const logger = require('morgan');
+const compression = require('compression');
+const errorHandler = require('errorHandler');
+app.use(cors());
+app.use(logger('dev'));
+app.use(compression());
+
+/**
+ * Primary app routes.
+ * RF: May need to re-order other routes/middleware e.g. express.static etc. 
+ */
+const userController = require('./controllers/user');
+app.post('/signin', userController.postSignin);
+app.post('/signup', userController.postSignup);
+// app.use('/dashboard', userController.getDashboard);
+
+/**
+ * OAuth authentication routes. (Sign in)
+ */
+const oAuthController = require('./routes/oauth');
+app.get('/auth/facebook', oAuthController.redirectToFacebookSignin);
+app.get('/auth/facebook/callback/', oAuthController.obtainFacebookCredentials, oAuthController.jwtAuthentication);
+});
+
+/**
+ * API routes
+ * RF: Migrate below to controllers and expose named routes in server.js for clarity. 
+ */
 const userAPIroutes = require('./routes/api/user');
 const coupleAPIroutes = require('./routes/api/couple');
 const questionAPIroutes = require('./routes/api/questions');
-const answerAPIroutes = require('./routes/api/answers'); 
+const answerAPIroutes = require('./routes/api/answers');
 
-// Cors is a middleware that will handle CORS in the browser. Must sit before routes/static serves. 
-app.use(cors());
-
-// const CouplesUser = require('./db/repos/couples_users');
-
-// // *** API routes *** //
 app.use('/api/v1', userAPIroutes);
 app.use('/api/v1', coupleAPIroutes);
 app.use('/api/v1', questionAPIroutes);
-app.use('/api/v1', answerAPIroutes); 
+app.use('/api/v1', answerAPIroutes);
 
 router(app);
 
-// // *** error handlers *** //
-// catch 404 and forward to error handler
 
-// app.use(function(req, res, next) {
-//   var err = new Error('Not Found');
-//   err.status = 404;
-//   next(err);
-// });
 
-// // development error handler
-// // will print stacktrace
-// if (app.get('env') === 'development') {
-//   app.use(function(err, req, res, next) {
-//     res.status(err.status || 500);
-//     res.json('error', {
-//       message: err.message,
-//       error: err
-//     });
-//   });
-// }
-
-// // production error handler
-// // no stacktraces leaked to user
-// app.use(function(err, req, res, next) {
-//   res.status(err.status || 500);
-//   res.json('error', {
-//     message: err.message,
-//     error: {}
-//   });
-// });
+/**
+ * Error Handler.
+ */
+app.use(errorHandler());
 
 module.exports = app;
 

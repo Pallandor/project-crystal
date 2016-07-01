@@ -1,12 +1,12 @@
-const Authentication = require('./controllers/authentication');
-const passportService = require('./services/passport');
+// const Authentication = require('./controllers/authentication');
+const passportService = require('./services/passport'); // => thats the config i.e strategy setting!
 const passport = require('passport');
 
 // Auth
-const requireAuth = passport.authenticate('jwt', { session: false });
-const requireSignin = passport.authenticate('local', { session: false });
-const facebookSignin = passport.authenticate('facebook');
-const facebookSigninCallback = passport.authenticate('facebook', { failureRedirect: '/login' });
+// const requireAuth = passport.authenticate('jwt', { session: false });
+// const requireSignin = passport.authenticate('local', { session: false });
+// const facebookSignin = passport.authenticate('facebook');
+// const facebookSigninCallback = passport.authenticate('facebook', { failureRedirect: '/login' });
 
 // @TODO placeholder data that will later be on each user in db
 // const stats = {
@@ -17,19 +17,25 @@ const facebookSigninCallback = passport.authenticate('facebook', { failureRedire
 //   generosity: 65
 // }
 
-module.exports = (app) => {
-  app.get('/dashboard', requireAuth, (req, res) => {
-    res.status(200);
-  });
+
   // @TODO serves up fake stats from above currently
   // app.get('/health', (req, res) => {
   //   res.send(stats);
   // });
-  app.get('/auth/facebook', facebookSignin);
-  app.get('/auth/facebook/callback', facebookSigninCallback, (req, res) => {
-    res.redirect('/dashboard');
+  // app.get('/auth/facebook', passport.authenticate('facebook'));
+  // app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' }, 
+  //   (req, res) => {
+  //   res.redirect('/dashboard');
+  // });
+
+
+module.exports = (app) => {
+  app.get('/dashboard', passport.authenticate('jwt', { session: false }), (req, res) => {
+    res.status(200);
   });
+
   // Signin and signup routes
-  app.post('/signin', requireSignin, Authentication.signin);
+  const Authentication = require('./controllers/authentication');
+  app.post('/signin', passport.authenticate('local', { session: false }), Authentication.signin);
   app.post('/signup', Authentication.signup);
 };

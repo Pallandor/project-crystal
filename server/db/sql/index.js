@@ -40,6 +40,7 @@ module.exports = {
         updateExistingCouple: sql('users/updateExistingCouple.sql'),
         checkIfBothUsersHaveJoined: sql('users/checkIfBothUsersHaveJoined.sql'),
         setBothUsersHaveJoinedToFalse: sql('users/setBothUsersHaveJoinedToFalse.sql'),
+        findByFacebookId: sql('users/findByFacebookId.sql'),
     },
     couples: {
         create: sql('couples/create.sql'),

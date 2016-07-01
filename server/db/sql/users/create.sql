@@ -11,6 +11,7 @@ CREATE TABLE Users
     last_name citext NOT NULL,
     email citext NOT NULL UNIQUE, 
     password text NOT NULL,
+    facebook_id citext UNIQUE DEFAULT NULL, 
     couple_id integer NOT NULL,
     FOREIGN KEY (couple_id) REFERENCES Couples(couple_id) ON DELETE CASCADE ON UPDATE CASCADE
 );

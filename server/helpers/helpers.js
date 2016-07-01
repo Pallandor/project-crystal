@@ -4,6 +4,24 @@ const bcrypt = require('bcrypt-nodejs');
 const Promise = require('bluebird');
 const each = require('lodash/each');
 
+/**
+ * Helper method for validating user's password.
+ */
+exports.comparePassword = (hashedPassword, password) => {
+  return new Promise((resolve, reject) => {
+      bcrypt.compare(hashedPassword, password, (err, isMatch) => {
+        if (err) {
+          return reject(err); 
+        }
+        if (isMatch){
+          return resolve(isMatch);
+        }
+        // RF: Not required if earlier err is passed on failed password match. 
+        return reject(null);
+      });
+  });
+};
+
 // desensitizes record objects, useful before passing data to front-end
 exports.desensitize = (recordOrRecords) => {
   const sensitiveKeys = ['password'];

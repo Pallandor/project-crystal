@@ -43,11 +43,13 @@ router.put('/users/:id', (req, res, next) => {
   res.status(501).send('Update route currently not yet set up! Stay tuned :)');
 });
 
-/** Add new user and return newly added user record  */
+/**
+ * Add new user and return newly added user. 
+ */
 router.post('/users/add', (req, res, next) => {
   const newUser = req.body;
   Users.checkIfExists(newUser.email)
-    .then(exists => { 
+    .then(exists => {
       if (exists) {
         res.status(422)
           .json({
@@ -58,40 +60,61 @@ router.post('/users/add', (req, res, next) => {
         helpers.hashPassword(newUser.password)
           .then(hash => {
             newUser.password = hash;
-            // RF: Unify under a single addUser method, move logic to DB controllers
-            // Don't need to expose this logic in routes. newUser when passed will include is_first_of_couple flag. 
-            if (newUser.is_first_of_couple) {
-              Users.addFirstUser(newUser)
-                .then(addedUser => {
+            Users.add(newUser)
+              .then(addedUser => {
+                if (addedUser) {
                   res.status(200)
                     .json({
                       success: true,
                       data: helpers.desensitize(addedUser),
                     });
-                });
-            } else {
-              Users.addSecondUser(newUser)
-                .then(addedUser => {
-                  if (addedUser) {
-                    res.status(200)
-                      .json({
-                        success: true,
-                        data: helpers.desensitize(addedUser),
-                      });
-                  } else {
-                    res.status(422)
-                      .json({
-                        success: false,
-                        data: newUser.other_user_email + ' is already connected to a Couple!',
-                      });
-                  }
-                });
-            }
+                } else {
+                  res.status(422)
+                    .json({
+                      success: false,
+                      data: newUser.other_user_email + ' is already connected to a Couple!',
+                    });
+                }
+              })
+              .catch(err => next(err));
           });
       }
-    })
-    .catch(err => next(err));
+    });
 });
+// RF: Unify under a single addUser method, move logic to DB controllers
+// Don't need to expose this logic in routes. newUser when passed will include is_first_of_couple flag. 
+// if (newUser.is_first_of_couple) {
+//   Users.addFirstUser(newUser)
+//     .then(addedUser => {
+//       res.status(200)
+//         .json({
+//           success: true,
+//           data: helpers.desensitize(addedUser),
+//         });
+//     });
+// } else {
+//   Users.addSecondUser(newUser)
+//     .then(addedUser => {
+//       if (addedUser) {
+//         res.status(200)
+//           .json({
+//             success: true,
+//             data: helpers.desensitize(addedUser),
+//           });
+//       } else {
+//         res.status(422)
+//           .json({
+//             success: false,
+//             data: newUser.other_user_email + ' is already connected to a Couple!',
+//           });
+//       }
+//     });
+// }
+//           });
+//       }
+//     })
+//     .catch(err => next(err));
+// });
 
 /** Delete single user record  */
 router.delete('/users/:id', (req, res, next) => {

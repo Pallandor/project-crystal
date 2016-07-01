@@ -20,22 +20,51 @@ module.exports = rep => {
         t.map(sql.init, null, row =>
           row)),
 
+    /**
+     * Adds a new user and returns new user and associated couple records. 
+     */
+    addUser: user => {
+      const newUser = merge({}, user);
+      if (newUser && !newUser.facebook_id) {
+        newUser.facebook_id = null;
+      }
+      if (user.is_first_of_couple) {
+        return rep.one(sql.addFirstUser, newUser);
+      }
+      return rep.oneOrNone(sql.updateExistingCouple, newUser.other_user_email)
+        .then(updatedExistingCouple => {
+          if (updatedExistingCouple) {
+            const secondUserWithCoupleId = merge({}, newUser, { couple_id: updatedExistingCouple.couple_id });
+            return rep.one(sql.addSecondUser, secondUserWithCoupleId);
+          }
+          return null;
+        });
+    },
+
     // Adds a new User using passed in data from newUser object
-    addFirstUser: newUser =>
-      rep.one(sql.addFirstUser, newUser),
+    addFirstUser: newUser => {
+      if (newUser && !newUser.facebook_id) {
+        newUser.facebook_id = null;
+      }
+      return rep.one(sql.addFirstUser, newUser);
+    },
 
     // Adds a new User to an existing couple using passed in data from secondUser object 
     // RF: rename updateExistingCouple SQL QueryFile to describe exactly what it updates/will Return. 
-    addSecondUser: secondUser =>
-      rep.oneOrNone(sql.updateExistingCouple, secondUser.other_user_email)
-      .then(updatedExistingCouple => {
-        if (updatedExistingCouple) {
-          const secondUserWithCoupleId = merge({}, secondUser, { couple_id: updatedExistingCouple.couple_id });
-          // secondUser.couple_id = updatedExistingCouple.couple_id;
-          return rep.one(sql.addSecondUser, secondUserWithCoupleId);
-        }
-        return null;
-      }),
+    addSecondUser: secondUser => {
+      if (secondUser && !secondUser.facebook_id) {
+        secondUser.facebook_id = null;
+      }
+      return rep.oneOrNone(sql.updateExistingCouple, secondUser.other_user_email)
+        .then(updatedExistingCouple => {
+          if (updatedExistingCouple) {
+            const secondUserWithCoupleId = merge({}, secondUser, { couple_id: updatedExistingCouple.couple_id });
+            // secondUser.couple_id = updatedExistingCouple.couple_id;
+            return rep.one(sql.addSecondUser, secondUserWithCoupleId);
+          }
+          return null;
+        });
+    },
 
     // RF: Remove nesting from Promises, reduce to single level Promise chain
     // PRF: Remove modularity of SQL queries or connect under single task/transaction using pg-promise inbuilt methods
@@ -54,8 +83,13 @@ module.exports = rep => {
 
     // Find and return user by user ID
     findById: id =>
-      rep.oneOrNone(sql.findById, id, user =>
-        user),
+      rep.oneOrNone(sql.findById, id),
+
+    /**
+     *  Finds user by facebook ID and returns null if no user found. 
+     */
+    findByFacebookId: facebookId =>
+      rep.oneOrNone(sql.findByFacebookId, facebookId),
 
     // Check if user exists by email or ID and return boolean true/false
     checkIfExists: emailOrId => {

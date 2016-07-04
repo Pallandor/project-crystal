@@ -44,8 +44,16 @@ app.post('/signup', userController.postSignup);
  */
 const oAuthController = require('./routes/oauth');
 app.get('/auth/facebook', oAuthController.redirectToFacebookSignin);
-app.get('/auth/facebook/callback/', oAuthController.obtainFacebookCredentials, oAuthController.jwtAuthentication);
-});
+app.get('/auth/facebook/callback/', 
+  oAuthController.obtainFacebookCredentials,
+  oAuthController.verifyExistingAccounts('facebook'),
+  oAuthController.queryCoupleStatus,
+  oAuthController.
+
+  oAuthController.authenticateWithFacebookCredentials,
+  oAuthController.queryCoupleStatus,
+  oAuthController.signSendJWT);
+app.post('/')
 
 /**
  * API routes

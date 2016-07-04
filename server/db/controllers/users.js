@@ -37,7 +37,8 @@ module.exports = rep => {
             const secondUserWithCoupleId = merge({}, newUser, { couple_id: updatedExistingCouple.couple_id });
             return rep.one(sql.addSecondUser, secondUserWithCoupleId);
           }
-          return null;
+          return null;  // only should return null if was attempting to add to a couple but couldnt find couple
+                        // using that email. 
         });
     },
 
@@ -90,6 +91,9 @@ module.exports = rep => {
      */
     findByFacebookId: facebookId =>
       rep.oneOrNone(sql.findByFacebookId, facebookId),
+
+    findByEmail: email => 
+      rep.oneOrNone(sql.findByEmail, email),
 
     // Check if user exists by email or ID and return boolean true/false
     checkIfExists: emailOrId => {

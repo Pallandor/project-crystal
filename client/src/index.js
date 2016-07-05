@@ -2,8 +2,11 @@ import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
+import createSocketIoMiddleware from 'redux-socket.io';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 import reduxThunk from 'redux-thunk';
+import injectTapEventPlugin from 'react-tap-event-plugin';
+import axios from 'axios';
 
 import App from './components/App/App';
 import Signin from './components/Authentication/Signin';
@@ -11,23 +14,42 @@ import Signout from './components/Authentication/Signout';
 import Signup from './components/Authentication/Signup';
 import Dashboard from './components/Dashboard/Dashboard';
 import Quiz from './components/Quiz/Quiz';
+import TodoList from './components/ToDo/TodoList';
 import requireAuth from './components/Authentication/RequireAuth';
 import LandingPage from './components/LandingPage/LandingPage';
 import Meter from './components/Meter/Meter';
+import Calendar from './components/Calendar/Calendar';
+
+import io from 'socket.io-client';
+let socket = io.connect();
+let socketIoMiddleware = createSocketIoMiddleware(socket, "server/");
+
 import reducers from './helpers/rootReducer/rootReducer';
 import { AUTH_USER } from './helpers/constants/types';
 
 import './index.css';
 
-const createStoreWithMiddleware = applyMiddleware(reduxThunk)(createStore);
-const store = createStoreWithMiddleware(reducers);
+const createStoreWithMiddleware = applyMiddleware(reduxThunk, socketIoMiddleware)(createStore);
+const store = createStoreWithMiddleware(reducers, window.devToolsExtension && window.devToolsExtension());
 
 const token = localStorage.getItem('token');
 // If we have a token then consider user to be signed in
 if (token) {
   // need to update application state
-  store.dispatch({ type: AUTH_USER });
+  axios.post('/verify', { token })
+    .then(response => {
+      if (!response.success) {
+        console.log('Try to silently consume JWT-token-forceful-login');
+        console.log(`The passed message from server, which you could dispatch using an AUTH USER error in other instances is: ${response.data}`);
+      } else {
+        store.dispatch({ type: AUTH_USER, payload: response.data });
+      }
+    })
+    .catch(err => console.log('Silently fail other errors re: JWT localStorage login attempt'));
+  // store.dispatch({ type: AUTH_USER });
 }
+
+injectTapEventPlugin();
 
 // The provider Communicates with the connected components *
 render(
@@ -38,10 +60,11 @@ render(
         <Route path="signin" component={Signin} />
         <Route path="signout" component={Signout} />
         <Route path="signup" component={Signup} />
-        <Route path="dashboard" component={requireAuth(Dashboard)} />
+        <Route path="dashboard/:test" component={requireAuth(Dashboard)} />
         <Route path="meter" component={Meter} />
         <Route path="quiz" component={Quiz} />
+        <Route path="calendar" component={Calendar} />
+        <Route path="todo" component={TodoList} />
       </Route>
     </Router>
-  </Provider>
-  , document.getElementById('app'));
+  </Provider>, document.getElementById('app'));

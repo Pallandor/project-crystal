@@ -18,8 +18,8 @@ exports.desensitize = (recordOrRecords) => {
   return new Error('There was an error desensitizing the records');
 };
 
-// Takes any amount of input and ouputs bold white text with black background and seperator 
-// lines for clarity. 
+// Takes any amount of input and ouputs bold white text with black background and separator
+// lines for clarity.
 exports.customLog = (input) => {
   console.log('-------------------- Roger\'s Custom Log ---------------------');
   console.log(clc.white.bgBlack.underline(input));
@@ -44,5 +44,16 @@ exports.hashPassword = (password) => {
         resolve(hash);
       });
     });
+  });
+};
+
+exports.calculateSparkScore = (userScore, partnerScore) => {
+  return Promise.try(function() {
+    const averageScore = Math.ceil((userScore + partnerScore) / 2);
+    const diff = Math.max(partnerScore, userScore) - Math.min(partnerScore, userScore);
+    const tenthOfDiff = Math.floor(diff * 0.10);
+    const tripled = tenthOfDiff * 3;
+    const sparkScore = averageScore - tripled;
+    return sparkScore;
   });
 };

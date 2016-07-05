@@ -1,23 +1,50 @@
-.health-meter {
-
+.data {
+  background-color: #fff;
+  width: 100%;
+  box-shadow: 0 1px 4px 0 rgba(0,0,0,0.14);
 }
 
-.overall-meter {
-
+.data_chart {
+  padding: 24px;
 }
 
-.spontaneity-meter {
-
+.data_chart--half {
+  width: 49%;
+  display: inline-block;
 }
 
-.helpful-meter {
-
+.data_chart--left {
+  border-right: 1px solid #e5e5e5;
 }
 
-.romance-meter {
-
+.data_chart--top {
+  border-top: 1px solid #e5e5e5;
+  margin-top: -6px;
 }
 
-.generosity-meter {
-  
+.data__header {
+  line-height: 55px;
+  border-bottom: 1px solid #e5e5e5;
+  background-color: #fafafa;
+  color: #333;
+  text-align: center;
+  font-size: 13px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.personalScore {
+  color: #f44336;
+  font-size: 36px;
+  font-weight: 500;
+  position: absolute;
+  z-index: 1;
+  margin: 0;
+  top: 77.5%;
+  left: 23.7%;
+}
+
+.meter-spinner {
+  margin-top: 240px;
 }

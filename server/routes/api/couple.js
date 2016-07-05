@@ -2,8 +2,10 @@ const express = require('express');
 const router = express.Router();
 const db = require(__dirname + '/../../db/index').db;
 const Couples = db.couples;
+const Users = db.users;
 const CouplesUsers = db.couples_users;
 const pgp = require(__dirname + '/../../db/index').pgp;
+const helpers = require(__dirname + '/../../helpers/helpers');
 
 // RF: inner join, return couple + user info
 // get all couples
@@ -27,7 +29,6 @@ router.get('/couples', (req, res, next) => {
 // RF: Inner join, return couple + user infos
 // get single couple
 router.get('/couples/:id', (req, res, next) => {
-  console.log('OMG ROGER IS AWESOME!!!!');
   const couple_id = parseInt(req.params.id);
   Couples.findById(couple_id)
     .then(data => {
@@ -42,6 +43,23 @@ router.get('/couples/:id', (req, res, next) => {
         success: false,
         error: err.message || err
       });
+    });
+});
+
+// get spark score
+router.get('/couples/sparkscore/:coupleId/', (req, res, next) => {
+  Couples.getBothUsers(req.params.coupleId)
+    .then(function(usersArr) {
+      helpers.calculateSparkScore(usersArr[0].score, usersArr[1].score)
+        .then(function(sparkScore) {
+          res.status(200).json({
+            success: true,
+            data: sparkScore,
+          });
+        })
+        .catch(function(err) {
+          next(err);
+        });
     });
 });
 
@@ -75,17 +93,12 @@ router.post('/couples/add', (req, res, next) => {
 
 router.post('/couples/answers', (req, res, next) => {
   const result = req.body;
-  console.log('lach kdjaskdjksjdkasjdkasjdkjaskdjaskdjaskdja')
-  console.log(result);
   // Use userId to get coupleID
-  CouplesUsers.findByUserId(req.body.user_id)
+  Users.findById(req.body.user_id)
   // update couple score using coupleID
-  .then(coupleUser => {
-    console.log('If this works then issue is NOT findByUserId');
-    console.log(coupleUser);
-    Couples.updateScore(result, coupleUser.couple_id)
+  .then(foundUserWithCouple => {
+    Couples.updateScore(result, foundUserWithCouple.couple_id)
     .then(data => {
-      console.log('ROuter COUPLE JS THEN STMT')
       console.log(data)
     })
   });

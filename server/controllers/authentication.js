@@ -1,10 +1,50 @@
 const jwt = require('jwt-simple');
 const config = require('../config');
-const Users = require(__dirname + '/../db/index').db.users;
-const Couples = require(__dirname + '/../db/index').db.couples;
-const CouplesUsers = require(__dirname + '/../db/index').db.couples_users;
-const pgp = require(__dirname + '/../db/index').pgp; 
-const bcrypt = require('bcrypt-nodejs');
+const db = require(`${__dirname}/../db/index`).db;
+const Users = db.users;
+const Couples = db.couples;
+const Events = db.events;
+// const pgp = require(__dirname + '/../db/index').pgp;
+// const bcrypt = require('bcrypt-nodejs');
+const helpers = require(`${__dirname}/../helpers/helpers`);
+
+// const clientSecret = require('./config'); // RF: add to process.env.JWT_SECRET
+
+exports.verifyJWT = (req, res, next) => {
+  console.log('inside verifyJWT....'); 
+  var decoded = null;
+  try {
+    const token = req.body.token;
+    // decoded = jwt.decode(token, clientSecret.jwtSecret);
+    decoded = jwt.decode(token, process.env.JWT_SECRET);
+    Users.findById(decoded.sub)
+      .then(foundUser => {
+        if (foundUser) {
+          res.json({
+            success: true,
+            data: helpers.desensitize(foundUser),
+          });
+        } else {
+          res.json({
+            success: false,
+            data: 'Unable to sign user in because user data does not match our database. Please try again',
+          });
+        }
+      })
+      .catch(err => next(err));
+  } catch (e) {
+    res.json({
+      success: false,
+      data: 'Something went wrong in verifying the JWT. Please consult our awesome back-end engineers!',
+    });
+  }
+};
+
+
+
+
+
+
 
 const tokenForUser = user => {
   // First argument is what to encode and the second is the secret to use
@@ -16,87 +56,85 @@ const tokenForUser = user => {
 
 exports.signin = (req, res, next) => {
   // User has already had their email and password auth'd ,just need to give them a token
-  req.user.coupleID = 35;
   res.send({
     token: tokenForUser(req.user),
-    user: req.user,
+    data: req.user,
   });
 };
 
 exports.signup = (req, res, next) => {
-  console.log('We are in the signup route...');
-  const first_name = req.body.firstName;
-  const last_name = req.body.lastName;
-  const email = req.body.email;
-  const password = req.body.password;
+  // Create new user object and populate with values from the request
+  const newUser = {};
+  newUser.first_name = req.body.firstName;
+  newUser.last_name = req.body.lastName;
+  newUser.email = req.body.email;
+  newUser.password = req.body.password;
+  if (req.body.couple === 'yes') {
+    newUser.is_first_of_couple = true;
+  } else {
+    newUser.is_first_of_couple = false;
+    newUser.other_user_email = req.body.otherEmail;
+  }
 
-  Users.findByEmail(req.body.email)
-    .then(data => {
-      console.log('We are in findByEmail');
-    // If a user with email does exist then return an error
-      if (data) {
-        return res.status(422).send({ error: 'Email is in use' });
-      }
-    // Otherwise, create and save user request
-    const user = {
-      first_name,
-      last_name,
-      email,
-      password,
-    };
+  // Default event needed for each new Couple that gets registered to database
+  const defaultEvent = {
+    title: 'Welcome!',
+    description: 'This is the default event for our calendar!',
+    start_date: '2016-06-30T06:00:00.000Z',
+    end_date: '2016-06-30T15:00:00.000Z',
+    category: 'Misc',
+  };
 
-    bcrypt.genSalt(10, (err, salt) => {
-      if (err) {
-        return next(err);
-      }
-      return bcrypt.hash(user.password, salt, null, (err, hash) => {
-        if (err) {
-          return next(err);
-        }
-        user.password = hash;
-
-        if (req.body.couple === 'yes') {
-          Couples.add()
-          .then(couple => {
-            Users.add(user)
-            .then(createdUser => {
-              CouplesUsers.add(couple.couple_id, createdUser.user_id)
-              .then(coupleUser => {
-                createdUser.coupleID = coupleUser.couple_id;
-                res.json({
-                  token: tokenForUser(createdUser),
-                  user: createdUser,
-                });
-              });
-            });
+  Users.checkIfExists(newUser.email)
+    .then(exists => {
+      console.log('just after checkIfExists ********');
+      if (exists) {
+        res.status(422)
+          .json({
+            success: false,
+            data: 'Email ' + newUser.email + ' is already is use!',
           });
-        } else {
-          console.log('hittttttttt');
-          const otherUserEmail = req.body.otherEmail;
-          console.log(otherUserEmail);
-          console.log('Above is the other User email ^^^^^');
-          console.log(req.body);
-          Users.findByEmail(otherUserEmail)
-          .then(otherUser => {
-            console.log('findByEmail=======');
-            console.log(otherUser);
-            CouplesUsers.findByUserId(otherUser.user_id)
-            .then(coupleUser => {
-              Users.add(user)
-              .then(createdUser => {
-                CouplesUsers.add(coupleUser.couple_id, createdUser.user_id)
-                .then(data => {
-                  createdUser.coupleID = coupleUser.couple_id;
-                  res.json({
-                    token: tokenForUser(createdUser),
-                    user: createdUser,
+      } else {
+        helpers.hashPassword(newUser.password)
+          .then(hash => {
+            newUser.password = hash;
+            // RF: Unify under a single addUser method, move logic to DB controllers
+            // Don't need to expose this logic in routes. newUser when passed will include is_first_of_couple flag.
+            if (newUser.is_first_of_couple) {
+              Users.addFirstUser(newUser)
+                .then(addedUser => {
+                  // Set the couple_id of the default event equal to the couple_id of the user that signed up
+                  defaultEvent.couple_id = addedUser.couple_id
+                  // Add the defaultEvent to the Events table with the appropriate couple_id
+                  Events.add(defaultEvent)
+                  .then(data => {
+                    res.status(200)
+                    .json({
+                      success: true,
+                      data: helpers.desensitize(addedUser),
+                    });
                   });
                 });
-              });
-            });
+            } else {
+              Users.addSecondUser(newUser)
+                .then(addedUser => {
+                  if (addedUser) {
+                    res.status(200)
+                      .json({
+                        success: true,
+                        data: helpers.desensitize(addedUser),
+                      });
+                  } else {
+                    res.status(422)
+                      .json({
+                        success: false,
+                        data: newUser.other_user_email + ' is already connected to a Couple!',
+                      });
+                  }
+                });
+            }
           });
-        }
-      });
-    });
-  });
+      }
+    })
+    .catch(err => next(err));
 };

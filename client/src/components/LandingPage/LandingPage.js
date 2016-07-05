@@ -3,6 +3,7 @@ import './landingPage.css';
 import Header from '../App/Header';
 
 function LandingPage() {
+  console.log('+++++++++ the landing page component just rendered i think! so this is where you need to handle url being diff..!!!'); 
   return (
     <div className="hero">
       <div className="hero__overlay">

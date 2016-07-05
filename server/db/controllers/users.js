@@ -89,8 +89,12 @@ module.exports = rep => {
     /**
      *  Finds user by facebook ID and returns null if no user found. 
      */
-    findByFacebookId: facebookId =>
-      rep.oneOrNone(sql.findByFacebookId, facebookId),
+    findByFacebookId: facebookId => {
+      console.log("inside DB controller findByFacebookId... ________ ");
+      console.log(facebookId);
+      console.log('============='); 
+      return rep.oneOrNone(sql.findByFacebookId, facebookId);
+    },
 
     findByEmail: email => 
       rep.oneOrNone(sql.findByEmail, email),

@@ -3,6 +3,10 @@
  * Sign in using email and password
  */
 
-exports.postSignin = (req, res, next) => {
-  // 
+exports.signin = (req, res, next) => {
+  // nothing
 };
+
+exports.signup = (req, res, next) => {
+  // nothing
+}; 

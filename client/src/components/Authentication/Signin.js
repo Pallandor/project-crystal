@@ -51,10 +51,16 @@ class Signin extends Component {
                 <label>Password:</label>
               </div>
             </fieldset>
+              <div className="signin__btn__facebook">
+              <button
+                onClick={this.facebookLogin.bind(this)}
+                className="btn btn-primary waves-effect waves-light btn-large"
+              >Facebook Sign In</button>
+              </div>
             <div className="signin__btn">
               <button
                 action="submit"
-                className="btn btn-primary waves-effect waves-light btn-large"
+                className="btn waves-effect waves-light btn-large"
               >Sign In</button>
               <div className="signin__alert">
                 {this.renderAlert()}

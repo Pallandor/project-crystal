@@ -26,21 +26,21 @@ export const signinUser = ({ email, password }) => {
     // Submit email/password to the server
     // email => email: email && password => password: password
     axios.post(`${apiUrl}/signin`, { email, password })
-    // if request is good,
-    .then(response => {
-      // update the state to indicate the user is authenticated
-      // because of redux we have direct access to the dispatch method
-      // This is equivalent to calling an action creator and return an object as an action
-      dispatch({ type: AUTH_USER, payload: response.data.user });
-      // Save the JWT token to localStorage's token key
-      localStorage.setItem('token', response.data.token);
-      // Redirect to the dashboard
-      browserHistory.push('/dashboard');
-    })
-    .catch(() => {
-      // Otherwise, show an error to the user
-      dispatch(authError('Bad Login Info'));
-    });
+      // if request is good,
+      .then(response => {
+        // update the state to indicate the user is authenticated
+        // because of redux we have direct access to the dispatch method
+        // This is equivalent to calling an action creator and return an object as an action
+        dispatch({ type: AUTH_USER, payload: response.data.user });
+        // Save the JWT token to localStorage's token key
+        localStorage.setItem('token', response.data.token);
+        // Redirect to the dashboard
+        browserHistory.push('/dashboard');
+      })
+      .catch(() => {
+        // Otherwise, show an error to the user
+        dispatch(authError('Bad Login Info'));
+      });
   };
 };
 
@@ -56,30 +56,47 @@ export const signoutUser = () => {
 export const signupUser = ({ firstName, lastName, email, password, couple, otherEmail }) => {
   return (dispatch) => {
     axios.post(`${apiUrl}/signup`, { firstName, lastName, email, password, couple, otherEmail })
-    .then(response => {
-      dispatch({ type: AUTH_USER, payload: response.data.user });
-      localStorage.setItem('token', response.data.token);
-      browserHistory.push('/quiz');
-    })
-    .catch(response => {
-      dispatch(authError(response.data.error));
-    });
+      .then(response => {
+        dispatch({ type: AUTH_USER, payload: response.data.user });
+        localStorage.setItem('token', response.data.token);
+        browserHistory.push('/quiz');
+      })
+      .catch(response => {
+        dispatch(authError(response.data.error));
+      });
   };
 };
 
 export const fetchMessage = () => {
   return (dispatch) => {
     axios.get(apiUrl, {
-      headers: { authorization: localStorage.getItem('token') },
-    })
-    .then(response => {
-      dispatch({
-        type: FETCH_MESSAGE,
-        payload: response.data.message,
+        headers: { authorization: localStorage.getItem('token') },
+      })
+      .then(response => {
+        dispatch({
+          type: FETCH_MESSAGE,
+          payload: response.data.message,
+        });
       });
-    });
   };
 };
+
+// +++++++++++++++++++++++++++++++++ ROGER +++++++++++++++++++++++++++
+
+const makeFacebookLoginRequest = () => ({
+  type: 'FACEBOOK_LOGIN_REQUEST',
+});
+
+import * as api from './authApi';
+
+export const facebookLogin = () => {
+  console.log('facebook login thunk started...');
+  return dispatch => {
+    console.log('entered facebook login thunk for reals. ');
+    dispatch(makeFacebookLoginRequest()); // what if existing req already exists? 
+    api.initiateFacebookLogin(); // shouldn't that cause a redirect? 
+  };
+}
 
 // export const facebookLogin = () => {
 //   return dispatch => {

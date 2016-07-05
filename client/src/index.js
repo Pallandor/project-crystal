@@ -38,9 +38,15 @@ if (token) {
   // need to update application state
   axios.post('/verify', { token })
   .then(response => {
-    store.dispatch({ type: AUTH_USER, payload: response.data });
-  });
-  store.dispatch({ type: AUTH_USER });
+    if (!response.success){
+      console.log('Try to silently consume JWT-token-forceful-login');
+      console.log(`The passed message from server, which you could dispatch using an AUTH USER error in other instances is: ${response.data}`);
+    } else {
+       store.dispatch({ type: AUTH_USER, payload: response.data });
+    } 
+  })
+  .catch(err => console.log('Silently fail other errors re: JWT localStorage login attempt')); 
+  // store.dispatch({ type: AUTH_USER });
 }
 
 injectTapEventPlugin();

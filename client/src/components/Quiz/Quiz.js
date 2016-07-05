@@ -5,6 +5,7 @@ import SecondQuestion from './SecondQuestion';
 import ThirdQuestion from './ThirdQuestion';
 import FourthQuestion from './FourthQuestion';
 import FifthQuestion from './FifthQuestion';
+import CompletedMessage from './CompletedMessage';
 import './quiz.css';
 
 class Quiz extends Component {
@@ -14,9 +15,10 @@ class Quiz extends Component {
     // Pro tip: The best place to bind your member functions is in the component constructor
     this.nextPage = this.nextPage.bind(this);
     this.previousPage = this.previousPage.bind(this);
+    this.renderQuiz = this.renderQuiz.bind(this); 
     this.state = {
-      page: 1
-    }
+      page: 1,
+    };
   }
 
   nextPage() {
@@ -27,23 +29,9 @@ class Quiz extends Component {
     this.setState({ page: this.state.page - 1 });
   }
 
-  render() {
-    const { onSubmit } = this.props;
-    const { page } = this.state;
-    const img = page === 1 ? "background--1" 
-      : page === 2 ? "background--2"
-      : page === 3 ? "background--3"
-      : page === 4 ? "background--4"
-      : "background--5";
-    const percent = page === 1 ? "20%"
-      : page === 2 ? "40%"
-      : page === 3 ? "60%"
-      : page === 4 ? "80%"
-      : "100%";
-    return (
-      <div>
-    <Header />
-      <div className={`background ${img}`}>
+  renderQuiz(){
+    return(
+       <div className={`background ${img}`}>
         <div className="hero__overlay">
           <div className="container">
         <div className="progress">
@@ -57,13 +45,36 @@ class Quiz extends Component {
           </div>
           </div>
       </div>
+      )
+  }
+
+  render() {
+    // const { onSubmit } = this.props;
+    // const { quiz } = this.props; // mock it BELOW
+    const quiz = { completed: true}; 
+    const { page } = this.state;
+    const img = page === 1 ? "background--1" 
+      : page === 2 ? "background--2"
+      : page === 3 ? "background--3"
+      : page === 4 ? "background--4"
+      : "background--5";
+    const percent = page === 1 ? "20%"
+      : page === 2 ? "40%"
+      : page === 3 ? "60%"
+      : page === 4 ? "80%"
+      : "100%";
+    return (
+      <div>
+      <Header />
+      { quiz.completed ? <CompletedMessage /> : <Quiz />}
     </div>
     )
   }
 }
 
+// will change to add check on quiz.completed etc props. 
 Quiz.propTypes = {
-  onSubmit: PropTypes.func.isRequired
+  onSubmit: PropTypes.func.isRequired,
 };
 
-export default Quiz
+export default Quiz;

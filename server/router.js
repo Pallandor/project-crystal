@@ -10,9 +10,14 @@ const facebookSignin = passport.authenticate('facebook');
 const facebookSigninCallback = passport.authenticate('facebook', { failureRedirect: '/login' });
 
 module.exports = (app) => {
-  app.get('/', requireAuth, (req, res) => {
-    res.status(200).send(initialState);
-  });
+
+  // app.get('/', (req, res, next) => {
+  //   console.log("is it trying to authenticate all homepages? wtf...");
+  //   console.log('+++++++++');
+  // }, requireAuth, (req, res) => {
+  //   console.log("what is this? where is this? WTF!!");
+  //   res.status(200).send(initialState);
+  // });
 
   app.get('/auth/facebook', facebookSignin);
   app.get('/auth/facebook/callback', facebookSigninCallback, (req, res) => {

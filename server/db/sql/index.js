@@ -81,6 +81,6 @@ module.exports = {
     drop: sql('todos/drop.sql'),
     empty: sql('todos/empty.sql'),
     findById: sql('todos/findById.sql'),
-    remove: sql('todos/remove.sql')
+    remove: sql('todos/remove.sql'),
   },
 };

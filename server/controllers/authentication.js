@@ -1,12 +1,50 @@
 const jwt = require('jwt-simple');
 const config = require('../config');
-const Users = require(__dirname + '/../db/index').db.users;
-const Couples = require(__dirname + '/../db/index').db.couples;
-const CouplesUsers = require(__dirname + '/../db/index').db.couples_users;
-const Events = require(__dirname + '/../db/index').db.events;
-const pgp = require(__dirname + '/../db/index').pgp;
-const bcrypt = require('bcrypt-nodejs');
-const helpers = require(__dirname + '/../helpers/helpers');
+const db = require(`${__dirname}/../db/index`).db;
+const Users = db.users;
+const Couples = db.couples;
+const Events = db.events;
+// const pgp = require(__dirname + '/../db/index').pgp;
+// const bcrypt = require('bcrypt-nodejs');
+const helpers = require(`${__dirname}/../helpers/helpers`);
+
+// const clientSecret = require('./config'); // RF: add to process.env.JWT_SECRET
+
+exports.verifyJWT = (req, res, next) => {
+  console.log('inside verifyJWT....'); 
+  var decoded = null;
+  try {
+    const token = req.body.token;
+    // decoded = jwt.decode(token, clientSecret.jwtSecret);
+    decoded = jwt.decode(token, process.env.JWT_SECRET);
+    Users.findById(decoded.sub)
+      .then(foundUser => {
+        if (foundUser) {
+          res.json({
+            success: true,
+            data: helpers.desensitize(foundUser),
+          });
+        } else {
+          res.json({
+            success: false,
+            data: 'Unable to sign user in because user data does not match our database. Please try again',
+          });
+        }
+      })
+      .catch(err => next(err));
+  } catch (e) {
+    res.json({
+      success: false,
+      data: 'Something went wrong in verifying the JWT. Please consult our awesome back-end engineers!',
+    });
+  }
+};
+
+
+
+
+
+
 
 const tokenForUser = user => {
   // First argument is what to encode and the second is the secret to use

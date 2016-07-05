@@ -37,15 +37,15 @@ const token = localStorage.getItem('token');
 if (token) {
   // need to update application state
   axios.post('/verify', { token })
-  .then(response => {
-    if (!response.success){
-      console.log('Try to silently consume JWT-token-forceful-login');
-      console.log(`The passed message from server, which you could dispatch using an AUTH USER error in other instances is: ${response.data}`);
-    } else {
-       store.dispatch({ type: AUTH_USER, payload: response.data });
-    } 
-  })
-  .catch(err => console.log('Silently fail other errors re: JWT localStorage login attempt')); 
+    .then(response => {
+      if (!response.success) {
+        console.log('Try to silently consume JWT-token-forceful-login');
+        console.log(`The passed message from server, which you could dispatch using an AUTH USER error in other instances is: ${response.data}`);
+      } else {
+        store.dispatch({ type: AUTH_USER, payload: response.data });
+      }
+    })
+    .catch(err => console.log('Silently fail other errors re: JWT localStorage login attempt'));
   // store.dispatch({ type: AUTH_USER });
 }
 
@@ -60,12 +60,11 @@ render(
         <Route path="signin" component={Signin} />
         <Route path="signout" component={Signout} />
         <Route path="signup" component={Signup} />
-        <Route path="dashboard" component={requireAuth(Dashboard)} />
+        <Route path="dashboard/:test" component={requireAuth(Dashboard)} />
         <Route path="meter" component={Meter} />
         <Route path="quiz" component={Quiz} />
         <Route path="calendar" component={Calendar} />
         <Route path="todo" component={TodoList} />
       </Route>
     </Router>
-  </Provider>
-  , document.getElementById('app'));
+  </Provider>, document.getElementById('app'));

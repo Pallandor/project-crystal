@@ -9,6 +9,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './calendar.css';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
+import isEqual from 'lodash/isEqual';
 
 class Calendar extends Component {
   constructor(props) {
@@ -29,8 +30,13 @@ class Calendar extends Component {
   }
 
   // Populate the calendar with all events for the couple on initial render
-  componentWillMount() {
-    this.props.fetchEvents(this.props.user.data.couple_id);
+  componentDidMount() {
+    console.log('did component mountlifecycle...');
+    const { fetchEvents, user } = this.props; 
+    if (user && user.data) {
+      console.log('calendar component did mount, trying to fetch events +++++  ');
+      fetchEvents(user.data.couple_id); // misconception across needing .data because he sends response.data instead of .data.data.. fuck
+    }
   }
 
   // Get all events for the couple
@@ -72,34 +78,29 @@ class Calendar extends Component {
     return moment(time).format('MMMM Do @ h:mmA');
   }
 
+  // on a reload... well a full page reload will just retriger componentDidMount because remounting it entirely. dadaoy. 
+  // componentWillReceiveProps(nextProps){
+  //   const { fetchEvents, user } = this.props; 
+  //    if (this.props.events && this.props.events.data && !isEqual(this.props.events.data.length, nextProps.events.data.length) { //as long as immutable shoudl be ok 
+  //     console.log('in componentWillReceiveProps and yep, props is diff so will fetch events! ...');
+  //     fetchEvents(user.data.couple_id); // misconception across needing .data because he sends response.data instead of .data.data.. fuck
+  //   }
+  // }
+
   render() {
     // If there are no events yet, load a spinner
-    if (!this.props.events) {
-      return (
-        <div className="center-align calendar-spinner">
-          <div className="preloader-wrapper big active">
-            <div className="spinner-layer spinner-blue-only">
-              <div className="circle-clipper left">
-                <div className="circle"></div>
-              </div><div className="gap-patch">
-                <div className="circle"></div>
-              </div><div className="circle-clipper right">
-                <div className="circle"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
-    // Defines the action for the Dialog component
-    const actions = [
-      // Cancel button to close Dialog
-      <FlatButton
+    if (!this.props.events){
+          return (
+            <h1> loadingg....... (lol) </h1>
+          );
+        }
+     const actions = [ 
+     <FlatButton
         label="Cancel"
         primary={true}
         onTouchTap={this.handleDialogClose}
       />,
-      // Delete button when clicked will trigger delete and close the Dialog
+
       <FlatButton
         label="Delete"
         primary={true}
@@ -108,7 +109,6 @@ class Calendar extends Component {
       />,
     ];
     return (
-      // Dialog component for the event pop-up on user click. Only appears when user clicks event
       <div>
         <div>
           <Dialog
@@ -152,10 +152,8 @@ class Calendar extends Component {
   }
 }
 
-// Connect the state with props for all events and each event
 const mapStateToProps = state => {
   return { events: state.calendar.events, user: state.auth.user };
 };
 
-// Hook up this component with the State and Actions
 export default connect(mapStateToProps, actions)(Calendar);

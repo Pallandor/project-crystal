@@ -5,8 +5,13 @@ import {
   FETCH_MESSAGE,
 } from '../../helpers/constants/types';
 
+const INITIAL_STATE = {
+  error: null,
+  authenticated: false,
+  user: null,
+};
 
-export default (state = {}, action) => {
+export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case AUTH_USER:
       // if user is authenticated, set the authentication state equal to true

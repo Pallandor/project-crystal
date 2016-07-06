@@ -36,13 +36,21 @@ const token = localStorage.getItem('token');
 // If we have a token then consider user to be signed in
 if (token) {
   // need to update application state
-  axios.post('/verify', { token })
+  console.log('----- before sending token up, it is: ');
+  console.log(token); 
+  console.log('-------')
+  axios.post('/verify', {
+    token: token,
+  })
     .then(response => {
-      if (!response.success) {
-        console.log('Try to silently consume JWT-token-forceful-login');
-        console.log(`The passed message from server, which you could dispatch using an AUTH USER error in other instances is: ${response.data}`);
+      if (!response.data.success) {
+        console.log(`The passed message from server, which you could dispatch using an AUTH USER error in other instances is: ${response.data.data}`);
       } else {
+        console.log('dispatching response.data to store...');
+        console.dir(response.data); 
+        console.log('-------------------');
         store.dispatch({ type: AUTH_USER, payload: response.data });
+        window.location = 'http://localhost:3000/dashboard'; // it doesnet success, if your clearing user tables on erver populateDb
       }
     })
     .catch(err => console.log('Silently fail other errors re: JWT localStorage login attempt'));
@@ -60,7 +68,7 @@ render(
         <Route path="signin" component={Signin} />
         <Route path="signout" component={Signout} />
         <Route path="signup" component={Signup} />
-        <Route path="dashboard/:test" component={requireAuth(Dashboard)} />
+        <Route path="dashboard" component={requireAuth(Dashboard)} />
         <Route path="meter" component={Meter} />
         <Route path="quiz" component={Quiz} />
         <Route path="calendar" component={Calendar} />

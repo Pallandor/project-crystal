@@ -10,13 +10,44 @@ const helpers = require(`${__dirname}/../helpers/helpers`);
 
 // const clientSecret = require('./config'); // RF: add to process.env.JWT_SECRET
 
+// __> should be responibility of FRONT END to protect FRONT END ROUTING. 
+// // will need a diff version of intermediate vierfy JWT for API protection i.e res.json instead of res.redirect
+// // because front end expecting a response/ 
+// exports.intermediateVerifyJWT = (req,res,next) => {
+//    var decoded = null;
+//   try {
+//     const token = req.body.token;
+//     decoded = jwt.decode(token, process.env.JWT_SECRET);
+//     next();
+//   }
+//   catch(e){
+//     console.log('there was an error in intermediateVerifyJWT! ', e);
+//     console.log('+++++');
+//     res.redirect('/'); 
+//   }
+// }; 
+
 exports.verifyJWT = (req, res, next) => {
-  console.log('inside verifyJWT....'); 
+  console.log('inside verifyJWT....');
+    console.log('++++++ req.body IS: ++++++++');
+    console.log(req.body);
+    console.log('++++++++++++++');
   var decoded = null;
   try {
     const token = req.body.token;
+    console.log('++++++ JWT SECRET IS: ++++++++');
+    console.log(process.env.JWT_SECRET);
+    console.log('++++++++++++++');
+
+    console.log('++++++ TOKEN BEFORE DECODED IS: ++++++++');
+    console.log(token);
+    console.log('++++++++++++++');
     // decoded = jwt.decode(token, clientSecret.jwtSecret);
     decoded = jwt.decode(token, process.env.JWT_SECRET);
+    console.log('++++++ DECODED IS: ++++++++');
+    console.log(decoded);
+    console.log('++++++++++++++');
+
     Users.findById(decoded.sub)
       .then(foundUser => {
         if (foundUser) {
@@ -51,7 +82,7 @@ const tokenForUser = user => {
   // Sub is short for Subject and it is the convention used for JWT
   // iat is short for Issued at Time and is another convention used for JWT
   const timestamp = new Date().getTime();
-  return jwt.encode({ sub: user.user_id, iat: timestamp, couple_id: user.couple_id }, config.jwtSecret);
+  return jwt.encode({ sub: user.user_id, iat: timestamp, couple_id: user.couple_id }, process.env.JWT_SECRET);
 };
 
 exports.signin = (req, res, next) => {
@@ -105,15 +136,16 @@ exports.signup = (req, res, next) => {
                 .then(addedUser => {
                   // Set the couple_id of the default event equal to the couple_id of the user that signed up
                   defaultEvent.couple_id = addedUser.couple_id
-                  // Add the defaultEvent to the Events table with the appropriate couple_id
+                    // Add the defaultEvent to the Events table with the appropriate couple_id
                   Events.add(defaultEvent)
-                  .then(data => {
-                    res.status(200)
-                    .json({
-                      success: true,
-                      data: helpers.desensitize(addedUser),
+                    .then(data => {
+                      res.status(200)
+                        .json({
+                          success: true,
+                          data: helpers.desensitize(addedUser),
+                          token: tokenForUser(addedUser),
+                        });
                     });
-                  });
                 });
             } else {
               Users.addSecondUser(newUser)
@@ -123,6 +155,7 @@ exports.signup = (req, res, next) => {
                       .json({
                         success: true,
                         data: helpers.desensitize(addedUser),
+                        token: tokenForUser(addedUser),
                       });
                   } else {
                     res.status(422)

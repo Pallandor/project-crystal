@@ -15,6 +15,7 @@ export const authError = error => {
   };
 };
 
+
 // Whenever we call signinUser we are going to return a function that is auto called by
 // redux-thunk middleware and it gets called with the dispatch method
 export const signinUser = ({ email, password, couple_id }) => {
@@ -59,6 +60,7 @@ export const signupUser = ({ firstName, lastName, email, password, couple, other
     .then(response => {
       dispatch({ type: AUTH_USER, payload: response.data });
       localStorage.setItem('token', response.data.token);
+  
       browserHistory.push('/quiz');
     })
     .catch(response => {

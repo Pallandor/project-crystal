@@ -6,7 +6,9 @@ import './meter.css';
 
 class Meter extends Component {
   componentWillMount() {
-    this.props.getHealth(this.props.user.data.couple_id);
+    if (this.props.user && this.props.user.data) {
+      this.props.getHealth(this.props.user.data.couple_id);
+    }
   }
 
   renderStats() {
@@ -208,8 +210,7 @@ class Meter extends Component {
     );
   }
 
-  render() {
-    if (!this.props.health) {
+/*
       return (
           <div className="center-align quiz-spinner">
             <div className="preloader-wrapper big active">
@@ -225,6 +226,14 @@ class Meter extends Component {
             </div>
           </div>
       );
+
+*/
+
+  render() {
+    if (!this.props.health) {
+      return (
+            <h1> LOADING THINGS yo.... </h1>
+            )
     }
 
     return (

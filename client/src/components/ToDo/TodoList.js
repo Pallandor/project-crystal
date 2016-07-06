@@ -12,8 +12,12 @@ class TodoList extends Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
-  componentWillMount() {
-    this.props.getTodos(this.props.user.data.couple_id);
+  componentDidMount() {
+    // errors on refresh. because attempted to have BEFORE component mounts.... instead of after. 
+    const { getTodos, user } = this.props;
+    if (user){
+      getTodos(user.data.couple_id);
+    }
   }
 
   handleChange(e){
@@ -70,5 +74,13 @@ class TodoList extends Component {
 const mapStateToProps = state => {
   return { todos: state.todo.fetchTodos, user: state.auth.user };
 };
+
+
+TodoList.propTypes = {
+  getTodos: React.PropTypes.func,
+  user: React.PropTypes.object,
+  todos: React.PropTypes.array,
+};
+
 
 export default connect(mapStateToProps, actions)(TodoList);

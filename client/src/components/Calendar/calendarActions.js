@@ -5,8 +5,10 @@ const apiUrl = 'http://localhost:3000/api/v1';
 // Get all events for each couple
 export const fetchEvents = (coupleID) => {
   return dispatch => {
+    console.log('+++++ inside fetch events, url for axios looks like: ', `${apiUrl}/events/${coupleID}`);
     axios.get(`${apiUrl}/events/${coupleID}`)
     .then(response => {
+      console.log("recieved response from fetchEvents, looks like: ", response.data); 
       dispatch({
         type: FETCH_EVENTS,
         payload: response.data,

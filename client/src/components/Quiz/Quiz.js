@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import Header from '../App/Header';
+import Footer from '../App/Footer';
 import FirstQuestion from './FirstQuestion';
 import SecondQuestion from './SecondQuestion';
 import ThirdQuestion from './ThirdQuestion';
@@ -65,8 +66,22 @@ class Quiz extends Component {
       : "100%";
     return (
       <div>
-      <Header />
-      { quiz.completed ? <CompletedMessage /> : <Quiz />}
+    <Header />
+      <div className={`background ${img}`}>
+        <div className="hero__overlay">
+          <div className="container">
+        <div className="progress">
+          <div className="determinate" style={{width: percent}}></div>
+        </div>
+        {page === 1 && <FirstQuestion onSubmit={this.nextPage}/>}
+        {page === 2 && <SecondQuestion previousPage={this.previousPage} onSubmit={this.nextPage}/>}
+        {page === 3 && <ThirdQuestion previousPage={this.previousPage} onSubmit={this.nextPage}/>}
+        {page === 4 && <FourthQuestion previousPage={this.previousPage} onSubmit={this.nextPage}/>}
+        {page === 5 && <FifthQuestion previousPage={this.previousPage} onSubmit={onSubmit}/>}
+          </div>
+          </div>
+      </div>
+      <Footer />
     </div>
     )
   }

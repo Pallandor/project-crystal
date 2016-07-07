@@ -15,8 +15,10 @@ import Signup from './components/Authentication/Signup';
 import Dashboard from './components/Dashboard/Dashboard';
 import Quiz from './components/Quiz/Quiz';
 import TodoList from './components/ToDo/TodoList';
+import DateNight from './components/DateNight/DateNight';
 import requireAuth from './components/Authentication/RequireAuth';
 import LandingPage from './components/LandingPage/LandingPage';
+import LearnMore from './components/LandingPage/LearnMore';
 import Meter from './components/Meter/Meter';
 import Calendar from './components/Calendar/Calendar';
 
@@ -36,25 +38,10 @@ const token = localStorage.getItem('token');
 // If we have a token then consider user to be signed in
 if (token) {
   // need to update application state
-  console.log('----- before sending token up, it is: ');
-  console.log(token); 
-  console.log('-------')
-  axios.post('/verify', {
-    token: token,
-  })
-    .then(response => {
-      if (!response.data.success) {
-        console.log(`The passed message from server, which you could dispatch using an AUTH USER error in other instances is: ${response.data.data}`);
-      } else {
-        console.log('dispatching response.data to store...');
-        console.dir(response.data); 
-        console.log('-------------------');
-        store.dispatch({ type: AUTH_USER, payload: response.data });
-        window.location = 'http://localhost:3000/dashboard'; // it doesnet success, if your clearing user tables on erver populateDb
-      }
-    })
-    .catch(err => console.log('Silently fail other errors re: JWT localStorage login attempt'));
-  // store.dispatch({ type: AUTH_USER });
+  axios.post('/verify', { token })
+  .then(response => {
+    store.dispatch({ type: AUTH_USER, payload: response.data });
+  });
 }
 
 injectTapEventPlugin();
@@ -68,11 +55,14 @@ render(
         <Route path="signin" component={Signin} />
         <Route path="signout" component={Signout} />
         <Route path="signup" component={Signup} />
+        {/*<Route path="dashboard/:access_token" component={requireAuth(Dashboard)} />*/}
+        <Route path="learnmore" component={LearnMore} />
         <Route path="dashboard" component={requireAuth(Dashboard)} />
         <Route path="meter" component={Meter} />
         <Route path="quiz" component={Quiz} />
-        <Route path="calendar" component={Calendar} />
+        <Route path="calendar(/:eventId)" component={Calendar} />
         <Route path="todo" component={TodoList} />
+        <Route path="dateNight" component={DateNight} />
       </Route>
     </Router>
   </Provider>, document.getElementById('app'));

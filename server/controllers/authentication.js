@@ -1,81 +1,11 @@
 const jwt = require('jwt-simple');
-const config = require('../config');
-const db = require(`${__dirname}/../db/index`).db;
-const Users = db.users;
-const Couples = db.couples;
-const Events = db.events;
-// const pgp = require(__dirname + '/../db/index').pgp;
-// const bcrypt = require('bcrypt-nodejs');
-const helpers = require(`${__dirname}/../helpers/helpers`);
-
-// const clientSecret = require('./config'); // RF: add to process.env.JWT_SECRET
-
-// __> should be responibility of FRONT END to protect FRONT END ROUTING. 
-// // will need a diff version of intermediate vierfy JWT for API protection i.e res.json instead of res.redirect
-// // because front end expecting a response/ 
-// exports.intermediateVerifyJWT = (req,res,next) => {
-//    var decoded = null;
-//   try {
-//     const token = req.body.token;
-//     decoded = jwt.decode(token, process.env.JWT_SECRET);
-//     next();
-//   }
-//   catch(e){
-//     console.log('there was an error in intermediateVerifyJWT! ', e);
-//     console.log('+++++');
-//     res.redirect('/'); 
-//   }
-// }; 
-
-exports.verifyJWT = (req, res, next) => {
-  console.log('inside verifyJWT....');
-    console.log('++++++ req.body IS: ++++++++');
-    console.log(req.body);
-    console.log('++++++++++++++');
-  var decoded = null;
-  try {
-    const token = req.body.token;
-    console.log('++++++ JWT SECRET IS: ++++++++');
-    console.log(process.env.JWT_SECRET);
-    console.log('++++++++++++++');
-
-    console.log('++++++ TOKEN BEFORE DECODED IS: ++++++++');
-    console.log(token);
-    console.log('++++++++++++++');
-    // decoded = jwt.decode(token, clientSecret.jwtSecret);
-    decoded = jwt.decode(token, process.env.JWT_SECRET);
-    console.log('++++++ DECODED IS: ++++++++');
-    console.log(decoded);
-    console.log('++++++++++++++');
-
-    Users.findById(decoded.sub)
-      .then(foundUser => {
-        if (foundUser) {
-          res.json({
-            success: true,
-            data: helpers.desensitize(foundUser),
-          });
-        } else {
-          res.json({
-            success: false,
-            data: 'Unable to sign user in because user data does not match our database. Please try again',
-          });
-        }
-      })
-      .catch(err => next(err));
-  } catch (e) {
-    res.json({
-      success: false,
-      data: 'Something went wrong in verifying the JWT. Please consult our awesome back-end engineers!',
-    });
-  }
-};
-
-
-
-
-
-
+const Users = require(__dirname + '/../db/index').db.users;
+const Couples = require(__dirname + '/../db/index').db.couples;
+const CouplesUsers = require(__dirname + '/../db/index').db.couples_users;
+const Events = require(__dirname + '/../db/index').db.events;
+const pgp = require(__dirname + '/../db/index').pgp;
+const bcrypt = require('bcrypt-nodejs');
+const helpers = require(__dirname + '/../helpers/helpers');
 
 const tokenForUser = user => {
   // First argument is what to encode and the second is the secret to use
@@ -111,14 +41,13 @@ exports.signup = (req, res, next) => {
   const defaultEvent = {
     title: 'Welcome!',
     description: 'This is the default event for our calendar!',
-    start_date: '2016-06-30T06:00:00.000Z',
-    end_date: '2016-06-30T15:00:00.000Z',
+    start_date: '2016-07-15T10:00:00.000Z',
+    end_date: '2016-07-15T20:00:00.000Z',
     category: 'Misc',
   };
 
   Users.checkIfExists(newUser.email)
     .then(exists => {
-      console.log('just after checkIfExists ********');
       if (exists) {
         res.status(422)
           .json({
@@ -171,3 +100,26 @@ exports.signup = (req, res, next) => {
     })
     .catch(err => next(err));
 };
+
+exports.fitbitHandler = (req, res, next) => {
+  const accessToken = req.access_token;
+  const refreshToken = req.refresh_token;
+  const tokens = {
+    access_token: accessToken,
+    refresh_token: refreshToken,
+    fitbit_id: req.fitbit_id,
+    user_id: req.userID,
+  };
+  Users.addToken(tokens)
+  .then(data => {
+    return res.status(200)
+      .json({
+        success: true,
+        data,
+      });
+  })
+  .catch(err => {
+    console.log(err);
+  });
+};
+

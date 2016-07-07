@@ -9,7 +9,9 @@
     "start": "npm run clean && concurrently \"npm run build\" \"nodemon server/server.js\"",
     "generate-docs": "node_modules/.bin/jsdoc -c jsdoc.json",
     "test": "mocha --compilers js:babel-core/register --require ./client/src/tests/testHelper.js --recursive ./client/src/tests/",
-    "test:watch": "npm run test -- --watch"
+    "test:watch": "npm run test -- --watch",
+    "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --compilers js:babel/register --colors --reporter dot test/",
+    "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --compilers js:babel/register --colors --reporter spec test/"
   },
   "repository": {
     "type": "git",
@@ -21,11 +23,15 @@
     "bcrypt-nodejs": "0.0.3",
     "bluebird": "3.4.1",
     "body-parser": "^1.15.1",
+    "brain": "^0.7.0",
+    "compression": "^1.6.2",
     "cors": "^2.7.1",
+    "dotenv": "^2.0.0",
     "express": "^4.14.0",
     "jwt-simple": "^0.5.0",
     "lodash": "^4.13.1",
     "material-ui": "^0.15.1",
+    "natural-brain": "^0.2.1",
     "normalizr": "^2.1.0",
     "passport": "^0.3.2",
     "passport-facebook": "^2.1.1",
@@ -45,7 +51,8 @@
     "redux-form": "^5.2.5",
     "redux-socket.io": "^1.2.0",
     "redux-thunk": "^2.1.0",
-    "socket.io": "^1.4.6"
+    "socket.io": "^1.4.6",
+    "yelp": "^1.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^6.3.6",
@@ -59,8 +66,10 @@
     "chai": "^3.5.0",
     "chai-jquery": "^2.0.0",
     "cli-color": "1.1.0",
+    "compression-webpack-plugin": "^0.3.1",
     "concurrently": "^2.1.0",
     "copy-webpack-plugin": "3.0.0",
+    "coveralls": "^2.11.9",
     "css-loader": "^0.23.1",
     "cssnano": "^3.7.0",
     "dedupe-plugin": "^1.0.0",
@@ -79,6 +88,7 @@
     "ignore-styles": "^4.0.0",
     "image-webpack-loader": "^1.8.0",
     "isomorphic-style-loader": "^1.0.0",
+    "istanbul": "^0.4.4",
     "jquery": "^3.0.0",
     "jsdom": "^9.3.0",
     "mocha": "^2.5.3",

@@ -4,12 +4,12 @@ import {
   AUTH_ERROR,
   FETCH_MESSAGE,
 } from '../../helpers/constants/types';
-
-const INITIAL_STATE = {
-  error: null,
-  authenticated: false,
-  user: null,
-};
+// const INITIAL_STATE = {
+//   user: null,
+//   authenticated: false,
+//   error: '',
+//   message: null,
+// }
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
@@ -25,3 +25,6 @@ export default (state = INITIAL_STATE, action) => {
   }
   return state;
 }
+
+/*** Selectors */
+export const getUser = (state) => state.auth.user;

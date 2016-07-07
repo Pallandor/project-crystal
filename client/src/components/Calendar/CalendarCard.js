@@ -36,15 +36,16 @@ class CalendarCard extends Component {
     return events.filter(isDateAfterToday).splice(0, 3).map((eventObj, index) => {
       const date = moment(eventObj.start_date).format('MMMM Do @ h:mmA');
       return (
-        <div key={`event-${index}`} className="col s4">
-          <div className="card blue-grey darken-1">
-            <Link to="/calendar">
-              <div className="card-content white-text">
-                <span className="card-title">{eventObj.title}</span>
-                <p>{date}</p>
-                <p>{eventObj.description}</p>
-              </div>
-            </Link>
+        <div key={`event-${index}`} className="col s12 m6 l4 ">
+          <div className="lime lighten-3 card inner-card">
+            <div className="card-content black-text">
+              {/*<pre>{JSON.stringify(eventObj,null,2)}</pre>*/}
+              {/* see if eventsObjtitle passes down. IF it does, then find out where */}
+              <Link to={`/calendar/${eventObj.event_id}`}> 
+                <div className="black-text our-card-title">{eventObj.title}</div>
+                <p className="black-text">{date}</p>
+              </Link>
+            </div>
           </div>
         </div>
       );
@@ -72,10 +73,14 @@ class CalendarCard extends Component {
     }
     // Call the renderEvents function and place each event into the calendar card
     return (
-      <div className="col s7 card white">
-        <h4 className="center-align">Upcoming Events</h4>
-        <div className="row">
-          {this.renderEvents()}
+      <div className="col s12 m6 l6">
+        <div className="card white card-height">
+          <div className="card-content">
+            <h5 className="center-align card__header">Upcoming Events</h5>
+            <div className="row">
+              {this.renderEvents()}
+            </div>
+          </div>
         </div>
       </div>
     );

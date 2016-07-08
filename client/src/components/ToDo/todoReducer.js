@@ -14,3 +14,6 @@ export default (state = { fetchTodos: [] }, action) => {
   }
   return state;
 }
+
+export const getTodos = state => state.todo.fetchTodos; 
+export const getLastFiveTodos = state => state.todo.fetchTodos.slice(-5).reverse(); 

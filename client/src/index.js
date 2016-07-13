@@ -9,6 +9,7 @@ import * as helpers from './helpers';
 import './index.css';
 
 helpers.initializeAuth(store); 
+helpers.initializeMaterialUIDependency();
 
 ReactDOM.render(
   <Provider store={store}>

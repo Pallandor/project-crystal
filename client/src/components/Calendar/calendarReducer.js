@@ -1,4 +1,7 @@
-import { CREATE_EVENT, FETCH_EVENTS } from '../../helpers/constants/types';
+import { 
+  CREATE_EVENT,
+  FETCH_EVENTS
+} from '../../helpers/constants/types';
 
 export default (state = {}, action) => {
   switch (action.type) {
@@ -11,3 +14,5 @@ export default (state = {}, action) => {
   }
   return state;
 }
+
+export const getEvents = state => state.calendar.events; 

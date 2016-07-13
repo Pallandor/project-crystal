@@ -39,9 +39,7 @@ class CalendarCard extends Component {
         <div key={`event-${index}`} className="col s12 m6 l4 ">
           <div className="lime lighten-3 card inner-card">
             <div className="card-content black-text">
-              {/*<pre>{JSON.stringify(eventObj,null,2)}</pre>*/}
-              {/* see if eventsObjtitle passes down. IF it does, then find out where */}
-              <Link to={`/calendar/${eventObj.event_id}`}> 
+              <Link to={"/calendar"}> 
                 <div className="black-text our-card-title">{eventObj.title}</div>
                 <p className="black-text">{date}</p>
               </Link>
@@ -56,7 +54,7 @@ class CalendarCard extends Component {
     // If there are no events yet, load a spinner
     if (!this.props.events) {
       return (
-        <div className="center-align calendar-spinner">
+        <div className="center-align `calen`dar-spinner">
           <div className="preloader-wrapper big active">
             <div className="spinner-layer spinner-blue-only">
               <div className="circle-clipper left">

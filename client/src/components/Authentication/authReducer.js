@@ -1,6 +1,6 @@
 import * as constants from '../../helpers/constants/types';
 
-export default (state = INITIAL_STATE, action) => {
+export default (state = {}, action) => {
   switch (action.type) {
     case constants.AUTH_USER:
       return { ...state, error:'', authenticated: true, user: action.payload };

@@ -32,9 +32,11 @@ export const getTodos = (coupleID) => {
 };
 
 export const postTodo = (newTodo) => {
+  console.log('postTodo is invoked...');
   return dispatch => {
     axios.post(`api/v1/todos/addTodo`, newTodo)
     .then(response => {
+      console.log('got response for postTodo....');
       dispatch({
         type: ADDED_TODO,
         payload: response.data,

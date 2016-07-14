@@ -2,14 +2,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
+import { getIsAuthenticated } from '../Authentication/authReducer';
 import './app.css';
 
 class Header extends Component {
 
- 
-
   renderLinks() {
-    if (this.props.authenticated) {
+    if (this.props.isAuthenticated) {
       // show link to sign out
       return [
         <li className="menu__item" key={1}>
@@ -59,7 +58,7 @@ class Header extends Component {
 
 const mapStateToProps = state => {
   return {
-    authenticated: state.auth.authenticated,
+    isAuthenticated: getIsAuthenticated(state),
   };
 };
 

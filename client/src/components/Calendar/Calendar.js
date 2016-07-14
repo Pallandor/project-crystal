@@ -1,33 +1,39 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import * as actions from './calendarActions';
 import moment from 'moment';
+
 import Header from '../App/Header';
 import Footer from '../App/Footer';
 import BigCalendar from 'react-big-calendar';
 import CreateEvent from './CreateEvent';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
-import './calendar.css';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import find from 'lodash/find';
-import merge from 'lodash/merge'; 
+import Spinner from '../App/Spinner'; 
+
+import { getEvents } from './calendarReducer';
+import { getUser } from '../Authentication/authReducer'; 
+import * as actions from './calendarActions';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import './calendar.css';
+
+import * as helpers from '../../helpers'; 
 
 class Calendar extends Component {
   constructor(props) {
     super(props);
-    // Used to store the state for Material-UI Dialog component and
-    // and for the selectEvent prop in BigCalendar
+
     this.state = {
       open: false,
       eventBox: '',
     };
-    // Bind all class functions to the class for use throughout the component
-    this.deleteEvent = this.deleteEvent.bind(this);
-    this.getEvents = this.getEvents.bind(this);
-    this.formatDate = this.formatDate.bind(this);
-    this.handleDialogOpen = this.handleDialogOpen.bind(this);
-    this.handleDialogClose = this.handleDialogClose.bind(this);
+    const functionsToBind = [
+      'deleteEvent',
+      'getEvents',
+      'formatDate',
+      'handleDialogOpen',
+      'handleDialogClose',
+    ]; 
+    helpers.bindThis(this, functionsToBind);
     BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment));
   }
 
@@ -77,12 +83,10 @@ class Calendar extends Component {
     }, 350);
   }
 
-  // Change the state to allow Dialog component to open
   handleDialogOpen() {
     this.setState({ open: true });
   }
 
-  // Change the state to allow Dialog component to close
   handleDialogClose() {
     this.setState({ open: false });
   }
@@ -102,14 +106,13 @@ class Calendar extends Component {
   // }
 
   render() {
-    // If there are no events yet, load a spinner
-    if (!this.props.events){
-          return (
-            <h1> loadingg....... (lol) </h1>
-          );
-        }
-     const actions = [ 
-     <FlatButton
+    if (!this.props.events) {
+      return <Spinner />
+    }
+    // Defines the action for the Dialog component
+    const actions = [
+      // Cancel button to close Dialog
+      <FlatButton
         label="Cancel"
         primary={true}
         onTouchTap={this.handleDialogClose}
@@ -170,8 +173,13 @@ class Calendar extends Component {
   }
 }
 
-const mapStateToProps = state => {
-  return { events: state.calendar.events, user: state.auth.user };
+Calendar.propTypes = {
+  // add proptypes validation; 
 };
+
+const mapStateToProps = state => ({
+  events: getEvents(state),
+  user: getUser(state),
+});
 
 export default connect(mapStateToProps, actions)(Calendar);

@@ -1,3 +1,7 @@
+/*.todo-single {
+  color: #ffffff !important;
+}*/
+
 .todo {
   height: 160vh;
   background: #000 no-repeat center/cover url("../../assets/13.jpg");
@@ -16,7 +20,7 @@
   margin-top: 60px;
   padding-top: 30px;
 }
-
+/*
 .todo__input {
   color: #fff;
 }
@@ -60,4 +64,4 @@
 
 .todo__createdAt {
   color: #fff;
-}
+}*/
